@@ -1,0 +1,2787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+<meta name="theme-color" content="#ff2e93" id="themeColorMeta" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="TTT" />
+<title>Trip Transactions Tracker — Plan, Spend, Split</title>
+
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<link rel="icon" type="image/png" href="icon-192.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,500&display=swap" rel="stylesheet" />
+
+<style>
+  /* ========== VIBE TOKENS ========== */
+  :root {
+    --c1: #ff2e93; --c2: #ff7a3d; --c3: #ffd166; --c4: #00d4c4;
+    --deep: #0a1f44; --cream: #fef6e4;
+    --bg1: #ffb3d1; --bg2: #ffd166;
+    --bg3a: #ffe0c2; --bg3b: #ffc2dd; --bg3c: #c2f0ec;
+    --shadow: rgba(10,31,68,.18);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bot: env(safe-area-inset-bottom, 0px);
+    --green: #2e9c5e;
+  }
+  [data-vibe="miami"]    { --c1:#ff2e93; --c2:#ff7a3d; --c3:#ffd166; --c4:#00d4c4; --bg1:#ffb3d1; --bg2:#ffd166; --bg3a:#ffe0c2; --bg3b:#ffc2dd; --bg3c:#c2f0ec; }
+  [data-vibe="italy"]    { --c1:#c8553d; --c2:#e08e45; --c3:#f3c969; --c4:#6a8e7f; --bg1:#f3d5b5; --bg2:#e7b08a; --bg3a:#faedcd; --bg3b:#f3d5b5; --bg3c:#dad7b9; }
+  [data-vibe="japan"]    { --c1:#d64161; --c2:#e8a0a0; --c3:#f7d5d8; --c4:#3a4970; --bg1:#fce4ec; --bg2:#dfe4ec; --bg3a:#fef6f8; --bg3b:#e8eef5; --bg3c:#d6dde8; }
+  [data-vibe="greece"]   { --c1:#0a6ba3; --c2:#3fa6c9; --c3:#f4d35e; --c4:#e85d4a; --bg1:#bde0fe; --bg2:#a2d2ff; --bg3a:#eaf6ff; --bg3b:#cfe7fd; --bg3c:#f4eed7; }
+  [data-vibe="mexico"]   { --c1:#e63946; --c2:#f4a261; --c3:#fcca46; --c4:#2a9d8f; --bg1:#ffd6a5; --bg2:#ffadad; --bg3a:#fff3c4; --bg3b:#ffcad4; --bg3c:#caf0f8; }
+  [data-vibe="france"]   { --c1:#b5485e; --c2:#d97757; --c3:#e8c5a0; --c4:#2c3e50; --bg1:#f5dada; --bg2:#e8d5c4; --bg3a:#faf3eb; --bg3b:#f0dcd0; --bg3c:#e1dad2; }
+  [data-vibe="thailand"] { --c1:#ec7a3c; --c2:#f4b942; --c3:#ffd166; --c4:#06a77d; --bg1:#ffe5b4; --bg2:#c8e6c9; --bg3a:#fef3d6; --bg3b:#d4edda; --bg3c:#b8e0c9; }
+  [data-vibe="iceland"]  { --c1:#3a6b8c; --c2:#6c9bb5; --c3:#a8d0e6; --c4:#d96458; --bg1:#c9e0eb; --bg2:#d5e7ee; --bg3a:#eaf2f6; --bg3b:#d1e3ec; --bg3c:#bcd4e0; }
+  [data-vibe="nyc"]      { --c1:#1f1f1f; --c2:#f4b73a; --c3:#e63946; --c4:#457b9d; --bg1:#e0e0e0; --bg2:#f4d35e; --bg3a:#f5f5f5; --bg3b:#e2e2e2; --bg3c:#dcdcdc; }
+  [data-vibe="hawaii"]   { --c1:#e63946; --c2:#f4a261; --c3:#ffd166; --c4:#06a77d; --bg1:#ffadad; --bg2:#a0e7e5; --bg3a:#fff5d6; --bg3b:#ffd6d6; --bg3c:#a0e7e5; }
+  [data-vibe="default"]  { --c1:#ff6b5b; --c2:#f59e0b; --c3:#fcd34d; --c4:#0d9488; --bg1:#ffd6c2; --bg2:#fde4a3; --bg3a:#fff5e6; --bg3b:#ffdacc; --bg3c:#ffe9a5; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { min-height: 100%; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Fraunces', serif;
+    background:
+      radial-gradient(ellipse at top left, var(--bg1) 0%, transparent 55%),
+      radial-gradient(ellipse at bottom right, var(--bg2) 0%, transparent 50%),
+      linear-gradient(180deg, var(--bg3a) 0%, var(--bg3b) 60%, var(--bg3c) 100%);
+    background-attachment: fixed;
+    color: var(--deep);
+    padding: calc(20px + var(--safe-top)) 16px calc(120px + var(--safe-bot));
+    position: relative;
+    overflow-x: hidden;
+    min-height: 100vh;
+    transition: background 0.4s ease;
+  }
+  body::before {
+    content: ""; position: fixed; top: -40px; right: -60px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, var(--c3) 0%, transparent 70%);
+    opacity: .4; pointer-events: none; z-index: 0;
+  }
+  .container { max-width: 560px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* Topbar */
+  .topbar { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .trip-switcher {
+    flex: 1; background: rgba(255,255,255,.7); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border: 2px solid var(--deep); border-radius: 14px;
+    padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+    cursor: pointer; box-shadow: 3px 3px 0 var(--deep); transition: transform .15s;
+    min-width: 0;
+  }
+  .trip-switcher:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--deep); }
+  .trip-switcher .flag { font-size: 22px; line-height: 1; flex-shrink: 0; }
+  .trip-switcher .info { flex: 1; min-width: 0; }
+  .trip-switcher .info .label {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--c1); font-weight: 600;
+  }
+  .trip-switcher .info .name {
+    font-family: 'Fraunces', serif; font-weight: 700; font-size: 16px;
+    line-height: 1.1; color: var(--deep);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .trip-switcher .chev { font-size: 18px; color: var(--c1); flex-shrink: 0; }
+  .new-trip-btn {
+    background: var(--deep); color: var(--cream); border: 2px solid var(--deep);
+    border-radius: 14px; width: 48px; height: 48px; font-size: 24px;
+    cursor: pointer; box-shadow: 3px 3px 0 var(--deep);
+    transition: transform .15s; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .new-trip-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--deep); }
+
+  /* Header */
+  header { text-align: center; margin-bottom: 24px; position: relative; }
+  .palm {
+    position: absolute; font-size: 38px; line-height: 1;
+    filter: drop-shadow(2px 2px 0 var(--deep));
+  }
+  .palm.left { top: 8px; left: -4px; transform: rotate(-14deg); }
+  .palm.right { top: 8px; right: -4px; transform: rotate(14deg) scaleX(-1); }
+  .eyebrow {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: .32em; text-transform: uppercase;
+    color: var(--c1); margin-bottom: 8px; font-weight: 600;
+  }
+  h1 {
+    font-family: 'Bagel Fat One', cursive; font-weight: 400;
+    font-size: clamp(48px, 14vw, 70px); line-height: 0.88;
+    letter-spacing: -0.02em; text-transform: uppercase;
+    background: linear-gradient(180deg, var(--c1) 0%, var(--c2) 55%, var(--c3) 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: var(--c1);
+    filter: drop-shadow(3px 3px 0 var(--deep));
+    margin-bottom: 6px; word-break: break-word;
+  }
+  .tagline {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-weight: 400; font-size: 14px;
+    color: var(--deep); opacity: 0.75;
+  }
+
+  /* Totals card */
+  .totals {
+    background: var(--cream); border: 3px solid var(--deep);
+    border-radius: 20px; padding: 22px; margin-bottom: 18px;
+    box-shadow: 6px 6px 0 var(--deep); position: relative;
+  }
+  .totals-label {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: .3em; text-transform: uppercase;
+    color: var(--deep); opacity: .55; margin-bottom: 4px;
+  }
+  .total-amount {
+    font-family: 'Bagel Fat One', cursive; font-size: 52px;
+    line-height: 1; color: var(--deep); margin-bottom: 16px;
+    word-break: break-all;
+  }
+  .total-amount .cents { font-size: 28px; opacity: .55; }
+
+  .budget-section { margin-bottom: 16px; }
+  .budget-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--deep); margin-bottom: 6px; gap: 8px;
+  }
+  .budget-row > span:last-child { text-align: right; }
+  .budget-edit {
+    background: none; border: none; cursor: pointer;
+    color: var(--c1); font-family: inherit; font-size: 11px;
+    text-decoration: underline; padding: 0;
+  }
+  .budget-bar {
+    height: 10px; background: rgba(10,31,68,.1);
+    border: 2px solid var(--deep); border-radius: 999px; overflow: hidden;
+  }
+  .budget-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--c4), var(--c3), var(--c2), var(--c1));
+    border-radius: 999px; transition: width .35s ease;
+  }
+  .budget-fill.over { background: var(--c1); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.65} }
+
+  .totals-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px; margin-top: 4px;
+  }
+  .stat { text-align: center; }
+  .stat-label {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: .15em; text-transform: uppercase;
+    color: var(--deep); opacity: .55; margin-bottom: 2px;
+  }
+  .stat-value {
+    font-family: 'Bagel Fat One', cursive;
+    font-size: 22px; line-height: 1; color: var(--deep);
+  }
+  .stat-value.accent { color: var(--c1); }
+  .stat-value.warm { color: var(--c2); }
+  .stat-value.tiny { font-size: 16px; }
+  .stat-value.pos { color: var(--green); }
+  .stat-value.neg { color: var(--c1); }
+
+  /* Split summary card */
+  .split-card {
+    background: rgba(255,255,255,.6); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    border: 2px dashed var(--deep); border-radius: 16px;
+    padding: 16px; margin-bottom: 18px;
+  }
+  .split-card .head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px; gap: 8px;
+  }
+  .split-card .head h3 {
+    font-family: 'Bagel Fat One', cursive;
+    font-size: 17px; color: var(--deep); letter-spacing: .02em;
+  }
+  .split-card .head .manage {
+    background: none; border: none; cursor: pointer;
+    color: var(--c1); font-family: 'DM Mono', monospace;
+    font-size: 11px; text-decoration: underline;
+    flex-shrink: 0;
+  }
+  .balance-list { display: flex; flex-direction: column; gap: 8px; }
+  .balance-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; background: white;
+    border: 1.5px solid rgba(10,31,68,.15); border-radius: 10px;
+    font-size: 14px;
+  }
+  .balance-row .avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--c2); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bagel Fat One', cursive; font-size: 13px;
+    flex-shrink: 0;
+  }
+  .balance-row .name {
+    flex: 1; font-weight: 500; color: var(--deep);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .balance-row .phrase {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-size: 12px; opacity: .7; margin-right: 6px;
+    flex-shrink: 0;
+  }
+  .balance-row .amt {
+    font-family: 'Bagel Fat One', cursive; font-size: 16px;
+    flex-shrink: 0;
+  }
+  .balance-row.owes-you .amt { color: var(--green); }
+  .balance-row.you-owe .amt { color: var(--c1); }
+  .balance-row.settled .amt { color: var(--deep); opacity: .5; }
+  .empty-split {
+    text-align: center; padding: 12px 6px;
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-size: 13px; color: var(--deep); opacity: .6;
+  }
+
+  /* Filters */
+  .filters {
+    display: flex; gap: 8px; overflow-x: auto;
+    padding: 4px 2px 8px; margin-bottom: 12px;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .filters::-webkit-scrollbar { display: none; }
+  .chip {
+    background: white; border: 2px solid var(--deep);
+    border-radius: 999px; padding: 7px 14px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: .05em; color: var(--deep); cursor: pointer;
+    white-space: nowrap; flex-shrink: 0; font-weight: 500;
+    transition: all .15s;
+  }
+  .chip:hover { transform: translateY(-1px); }
+  .chip.active { background: var(--deep); color: var(--cream); }
+  .chip .count { opacity: .7; margin-left: 4px; font-size: 10px; }
+
+  .section-title {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: .2em; text-transform: uppercase;
+    color: var(--deep); opacity: .65; margin: 6px 4px 10px;
+  }
+
+  /* Expense list */
+  .expense-list { display: flex; flex-direction: column; gap: 10px; }
+  .expense-card {
+    background: white; border: 2px solid var(--deep);
+    border-radius: 14px; padding: 14px;
+    display: grid; grid-template-columns: 40px 1fr auto;
+    gap: 12px; align-items: start;
+    box-shadow: 3px 3px 0 var(--deep);
+    transition: transform .15s, box-shadow .15s, opacity .15s;
+    position: relative;
+  }
+  .expense-card.is-settled {
+    opacity: .55;
+    box-shadow: 2px 2px 0 var(--deep);
+  }
+  .expense-card.is-settled .ex-amount { text-decoration: line-through; opacity: .7; }
+  .cat-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .ex-body { min-width: 0; }
+  .ex-title {
+    font-family: 'Fraunces', serif; font-weight: 700;
+    font-size: 15px; color: var(--deep);
+    line-height: 1.25; margin-bottom: 2px; word-break: break-word;
+  }
+  .ex-meta {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--deep); opacity: .6; letter-spacing: .04em;
+  }
+  .ex-split-info {
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-size: 12px; color: var(--c1); margin-top: 3px;
+  }
+  .ex-split-info.settled { color: var(--green); }
+  .ex-right {
+    text-align: right; display: flex; flex-direction: column;
+    align-items: flex-end; gap: 4px; flex-shrink: 0;
+  }
+  .ex-amount {
+    font-family: 'Bagel Fat One', cursive; font-size: 20px;
+    color: var(--deep); line-height: 1;
+  }
+  .ex-your-share {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--c1); font-weight: 500;
+  }
+  .row-actions {
+    display: flex; gap: 6px; margin-top: 6px;
+    grid-column: 1 / -1;
+    border-top: 1.5px dashed rgba(10,31,68,.15);
+    padding-top: 10px;
+  }
+  .row-action {
+    flex: 1; border: 1.5px solid var(--deep);
+    background: white; border-radius: 8px;
+    padding: 7px 8px; font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--deep); cursor: pointer; font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .row-action.primary { background: var(--green); border-color: var(--green); color: white; }
+  .row-action.primary:disabled { background: var(--deep); border-color: var(--deep); opacity: .55; cursor: default; }
+  .row-action.warn { color: var(--c1); border-color: var(--c1); }
+
+  .empty {
+    text-align: center; padding: 36px 16px;
+    color: var(--deep); opacity: .55;
+    background: rgba(255,255,255,.5); border: 2px dashed var(--deep);
+    border-radius: 16px;
+    font-family: 'Fraunces', serif; font-style: italic;
+  }
+  .empty .em { font-size: 32px; display: block; margin-bottom: 8px; opacity: .8; }
+
+  /* Utility row */
+  .util-row { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .util-btn {
+    flex: 1; min-width: 0;
+    background: rgba(255,255,255,.7); border: 2px solid var(--deep);
+    border-radius: 12px; padding: 10px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--deep); cursor: pointer; font-weight: 500;
+  }
+  .util-btn.danger { color: var(--c1); }
+
+  /* FAB */
+  .fab {
+    position: fixed; bottom: calc(20px + var(--safe-bot));
+    left: 50%; transform: translateX(-50%);
+    background: var(--deep); color: var(--cream);
+    border: 3px solid var(--deep); border-radius: 999px;
+    padding: 14px 28px; font-family: 'Bagel Fat One', cursive;
+    font-size: 16px; letter-spacing: .03em; cursor: pointer;
+    z-index: 50;
+    box-shadow: 0 10px 30px var(--shadow), 4px 4px 0 var(--c1);
+    display: flex; align-items: center; gap: 8px;
+    transition: transform .15s;
+  }
+  .fab:active { transform: translateX(-50%) translateY(2px); box-shadow: 0 6px 20px var(--shadow), 2px 2px 0 var(--c1); }
+  .fab .plus { font-size: 22px; line-height: 1; }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10,31,68,.55);
+    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+    z-index: 100; display: none;
+    align-items: flex-end; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--cream); border-top: 3px solid var(--deep);
+    border-radius: 24px 24px 0 0;
+    width: 100%; max-width: 560px;
+    padding: 16px 22px calc(28px + var(--safe-bot));
+    max-height: 92vh; overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    animation: slideUp .25s ease;
+  }
+  @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: var(--deep); opacity: .25;
+    border-radius: 999px; margin: 0 auto 14px;
+  }
+  .modal-title {
+    font-family: 'Bagel Fat One', cursive; font-size: 26px;
+    color: var(--deep); line-height: 1; margin-bottom: 4px;
+  }
+  .modal-sub {
+    font-family: 'Fraunces', serif; font-style: italic; font-size: 13px;
+    color: var(--deep); opacity: .7; margin-bottom: 18px;
+  }
+
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block; font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--deep); opacity: .7; margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .field input, .field select {
+    width: 100%; background: white;
+    border: 2px solid var(--deep); border-radius: 10px;
+    padding: 12px 14px; font-family: 'Fraunces', serif;
+    font-size: 16px; color: var(--deep); outline: none;
+  }
+  .field input:focus, .field select:focus {
+    box-shadow: 0 0 0 3px var(--c3);
+  }
+
+  .amount-input { position: relative; }
+  .amount-input::before {
+    content: "$"; position: absolute; left: 14px; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Bagel Fat One', cursive; font-size: 20px;
+    color: var(--c1);
+  }
+  .amount-input input {
+    padding-left: 32px; font-family: 'Bagel Fat One', cursive;
+    font-size: 22px;
+  }
+
+  .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .cat-pick {
+    background: white; border: 2px solid var(--deep); border-radius: 10px;
+    padding: 8px 4px; cursor: pointer; text-align: center;
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: .04em; color: var(--deep); text-transform: uppercase;
+    transition: all .15s;
+  }
+  .cat-pick .em { font-size: 20px; display: block; line-height: 1; margin-bottom: 3px; }
+  .cat-pick.active { background: var(--deep); color: var(--cream); transform: scale(1.04); }
+
+  .people-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .person-pick {
+    background: white; border: 2px solid var(--deep);
+    border-radius: 999px; padding: 6px 12px 6px 6px;
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+    font-family: 'Fraunces', serif; font-size: 13px;
+    color: var(--deep); transition: all .15s;
+    max-width: 100%;
+  }
+  .person-pick .av {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--c2); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bagel Fat One', cursive; font-size: 10px;
+    flex-shrink: 0;
+  }
+  .person-pick.active { background: var(--deep); color: var(--cream); }
+  .person-pick.active .av { background: var(--c3); color: var(--deep); }
+  .person-pick.me { border-color: var(--c1); }
+  .person-pick.me .av { background: var(--c1); }
+  .person-pick.me.active { background: var(--c1); border-color: var(--c1); }
+  .person-pick .x {
+    opacity: .5; margin-left: 4px; font-size: 14px; cursor: pointer;
+  }
+
+  .add-person-row { display: flex; gap: 6px; margin-top: 8px; }
+  .add-person-row input { flex: 1; min-width: 0; }
+  .add-person-btn {
+    background: var(--c1); color: white;
+    border: 2px solid var(--deep); border-radius: 10px;
+    padding: 0 16px; font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+    cursor: pointer; font-weight: 500; flex-shrink: 0;
+  }
+
+  .split-preview {
+    background: white; border: 2px solid var(--deep);
+    border-radius: 12px; padding: 12px 14px; margin-top: 10px;
+    font-family: 'Fraunces', serif; font-size: 14px;
+    color: var(--deep); line-height: 1.4;
+  }
+  .split-preview .big {
+    font-family: 'Bagel Fat One', cursive; font-size: 22px;
+    color: var(--c1); display: block; margin-bottom: 2px;
+  }
+  .split-preview .small { font-size: 12px; opacity: .7; font-style: italic; }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .btn {
+    flex: 1; border: 2px solid var(--deep);
+    border-radius: 12px; padding: 13px;
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    letter-spacing: .12em; text-transform: uppercase;
+    cursor: pointer; font-weight: 600;
+  }
+  .btn-cancel { background: transparent; color: var(--deep); }
+  .btn-save {
+    background: var(--deep); color: var(--cream);
+    box-shadow: 3px 3px 0 var(--c1);
+  }
+  .btn-save:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--c1); }
+
+  /* Trip list */
+  .trip-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+  .trip-item {
+    background: white; border: 2px solid var(--deep);
+    border-radius: 14px; padding: 14px;
+    cursor: pointer; display: flex; align-items: center; gap: 12px;
+    transition: transform .15s;
+  }
+  .trip-item:active { transform: translate(1px, 1px); }
+  .trip-item.active {
+    background: var(--cream); box-shadow: 4px 4px 0 var(--c1);
+  }
+  .trip-item .flag { font-size: 28px; flex-shrink: 0; }
+  .trip-item .info { flex: 1; min-width: 0; }
+  .trip-item .name {
+    font-family: 'Bagel Fat One', cursive; font-size: 18px;
+    color: var(--deep); line-height: 1;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .trip-item .meta {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--deep); opacity: .65; margin-top: 4px;
+    letter-spacing: .08em;
+  }
+  .trip-item .arrow { font-size: 18px; color: var(--c1); flex-shrink: 0; }
+  .trip-item .del-trip {
+    background: none; border: none; color: var(--deep); opacity: .35;
+    cursor: pointer; font-size: 16px; padding: 4px 8px;
+    flex-shrink: 0;
+  }
+  .trip-item .del-trip:hover { opacity: 1; color: var(--c1); }
+
+  /* Vibe picker */
+  .vibe-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .vibe-pick {
+    border: 2px solid var(--deep); border-radius: 10px;
+    padding: 10px 4px 8px; cursor: pointer; text-align: center;
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: .05em; color: var(--deep); text-transform: uppercase;
+    transition: all .15s; overflow: hidden;
+  }
+  .vibe-pick .em { font-size: 22px; display: block; line-height: 1; margin-bottom: 4px; }
+  .vibe-pick.active { transform: scale(1.05); box-shadow: 3px 3px 0 var(--deep); }
+  .vibe-pick[data-v="miami"]    { background: linear-gradient(135deg,#ff2e93 0%, #ffd166 100%); color: white; }
+  .vibe-pick[data-v="italy"]    { background: linear-gradient(135deg,#c8553d 0%, #f3c969 100%); color: white; }
+  .vibe-pick[data-v="japan"]    { background: linear-gradient(135deg,#d64161 0%, #f7d5d8 100%); }
+  .vibe-pick[data-v="greece"]   { background: linear-gradient(135deg,#0a6ba3 0%, #f4d35e 100%); color: white; }
+  .vibe-pick[data-v="mexico"]   { background: linear-gradient(135deg,#e63946 0%, #fcca46 100%); color: white; }
+  .vibe-pick[data-v="france"]   { background: linear-gradient(135deg,#b5485e 0%, #e8c5a0 100%); color: white; }
+  .vibe-pick[data-v="thailand"] { background: linear-gradient(135deg,#ec7a3c 0%, #06a77d 100%); color: white; }
+  .vibe-pick[data-v="iceland"]  { background: linear-gradient(135deg,#3a6b8c 0%, #a8d0e6 100%); color: white; }
+  .vibe-pick[data-v="nyc"]      { background: linear-gradient(135deg,#1f1f1f 0%, #f4b73a 100%); color: white; }
+  .vibe-pick[data-v="hawaii"]   { background: linear-gradient(135deg,#e63946 0%, #06a77d 100%); color: white; }
+  .vibe-pick[data-v="default"]  { background: linear-gradient(135deg,#ff6b5b 0%, #fcd34d 100%); color: white; }
+
+  /* Payback toggle */
+  .payback-toggle {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .payback-opt {
+    background: white; border: 2px solid var(--deep);
+    border-radius: 12px; padding: 12px 8px;
+    cursor: pointer; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    font-family: 'Fraunces', serif; color: var(--deep);
+    transition: all .15s;
+  }
+  .payback-opt:active { transform: scale(0.97); }
+  .payback-opt .pb-em { font-size: 24px; line-height: 1; margin-bottom: 2px; }
+  .payback-opt .pb-name {
+    font-weight: 700; font-size: 14px;
+  }
+  .payback-opt .pb-sub {
+    font-style: italic; font-size: 11px; opacity: .65;
+  }
+  .payback-opt.active {
+    transform: scale(1.02);
+    box-shadow: 3px 3px 0 var(--deep);
+  }
+  .payback-opt.active[data-pb="owed"] {
+    background: var(--c1); color: white;
+    border-color: var(--deep);
+  }
+  .payback-opt.active[data-pb="owed"] .pb-sub { opacity: .85; }
+  .payback-opt.active[data-pb="treat"] {
+    background: var(--green); color: white;
+    border-color: var(--deep);
+  }
+  .payback-opt.active[data-pb="treat"] .pb-sub { opacity: .85; }
+
+  /* Treat badge for expense cards */
+  .treat-badge {
+    display: inline-block;
+    background: var(--green); color: white;
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 999px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .mixed-badge {
+    display: inline-block;
+    background: var(--c2); color: white;
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 999px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .expense-card.is-treat .cat-icon {
+    position: relative;
+  }
+  .expense-card.is-treat .cat-icon::after {
+    content: "🎁";
+    position: absolute; bottom: -4px; right: -4px;
+    font-size: 14px;
+    filter: drop-shadow(0 0 2px white);
+  }
+
+  /* Person detail modal */
+  .person-hero {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 16px;
+  }
+  .person-avatar-big {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--c1); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bagel Fat One', cursive; font-size: 26px;
+    flex-shrink: 0;
+    box-shadow: 3px 3px 0 var(--deep);
+    border: 2px solid var(--deep);
+  }
+  .person-stats {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    background: white;
+    border: 2px solid var(--deep); border-radius: 12px;
+    padding: 14px 8px;
+    margin-bottom: 10px;
+  }
+  .pstat { text-align: center; }
+  .pstat-label {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--deep); opacity: .55; margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .pstat-value {
+    font-family: 'Bagel Fat One', cursive;
+    font-size: 20px; line-height: 1; color: var(--deep);
+  }
+  .pstat-value.warm { color: var(--c2); }
+
+  /* Status panel — Treated / Paid Back / Still Owed */
+  .status-panel {
+    display: flex; flex-direction: column;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .status-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px;
+    border: 2px solid var(--deep);
+    border-radius: 12px;
+    background: white;
+    transition: opacity 0.2s;
+  }
+  .status-row.is-zero {
+    opacity: 0.5;
+  }
+  .status-row.treated { background: rgba(46,156,94,0.08); border-color: var(--green); }
+  .status-row.paidback { background: rgba(13,148,136,0.08); border-color: var(--c4); }
+  .status-row.owed { background: rgba(255,107,91,0.10); border-color: var(--c1); }
+  .status-left {
+    display: flex; align-items: center; gap: 10px;
+    min-width: 0;
+  }
+  .status-em {
+    font-size: 22px; line-height: 1;
+    flex-shrink: 0;
+  }
+  .status-text { min-width: 0; }
+  .status-label {
+    font-family: 'Fraunces', serif; font-weight: 700;
+    font-size: 15px; color: var(--deep);
+    line-height: 1.1;
+  }
+  .status-sub {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--deep); opacity: .55;
+    letter-spacing: .04em; margin-top: 2px;
+  }
+  .status-amt {
+    font-family: 'Bagel Fat One', cursive;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .status-row.treated .status-amt { color: var(--green); }
+  .status-row.paidback .status-amt { color: var(--c4); }
+  .status-row.owed .status-amt { color: var(--c1); }
+  .status-row.is-zero .status-amt { color: var(--deep); }
+
+  .person-exp-list {
+    display: flex; flex-direction: column; gap: 8px;
+    max-height: 45vh; overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 2px;
+  }
+  .pexp {
+    background: white; border: 1.5px solid var(--deep);
+    border-radius: 10px; padding: 10px 12px;
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 8px; align-items: center;
+    transition: background .15s, transform .1s;
+  }
+  .pexp.settled {
+    background: rgba(46,156,94,0.08);
+    border-color: var(--green);
+  }
+  .pexp .pexp-body { min-width: 0; }
+  .pexp .pexp-right { text-align: right; flex-shrink: 0; }
+  .pexp .pexp-title {
+    font-family: 'Fraunces', serif; font-weight: 700;
+    font-size: 14px; color: var(--deep);
+    line-height: 1.25; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  .pexp .pexp-meta {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--deep); opacity: .55; margin-top: 2px;
+  }
+  .pexp-controls {
+    display: flex; gap: 6px; margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .pexp-toggle, .pexp-settle {
+    border: 1.5px solid var(--deep);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .04em;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform .12s;
+  }
+  .pexp-toggle:active, .pexp-settle:active { transform: scale(0.95); }
+  .pexp-toggle.is-owed {
+    background: var(--c1); color: white; border-color: var(--c1);
+  }
+  .pexp-toggle.is-treat {
+    background: var(--green); color: white; border-color: var(--green);
+  }
+  .pexp-settle {
+    background: white; color: var(--deep);
+  }
+  .pexp-settle:disabled {
+    background: var(--green); color: white; border-color: var(--green);
+    opacity: .75; cursor: default;
+  }
+  .pexp .pexp-amt {
+    font-family: 'Bagel Fat One', cursive;
+    font-size: 15px; color: var(--deep);
+  }
+  .pexp.settled .pexp-amt {
+    color: var(--green);
+    text-decoration: line-through;
+    text-decoration-color: rgba(46,156,94,.4);
+  }
+  .pexp .pexp-status {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--c1);
+    margin-top: 2px;
+  }
+  .pexp.settled .pexp-status { color: var(--green); }
+  .pexp-empty {
+    text-align: center; padding: 24px 12px;
+    color: var(--deep); opacity: .55;
+    font-family: 'Fraunces', serif; font-style: italic;
+    font-size: 13px;
+  }
+
+  /* Make balance rows clickable */
+  .balance-row.clickable {
+    cursor: pointer;
+    transition: transform .12s, box-shadow .12s;
+  }
+  .balance-row.clickable:active {
+    transform: scale(0.98);
+  }
+  .balance-row .chev {
+    color: var(--c1);
+    font-size: 16px;
+    font-weight: 700;
+    margin-left: 6px;
+    opacity: .6;
+    flex-shrink: 0;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: calc(90px + var(--safe-bot));
+    left: 50%; transform: translateX(-50%) translateY(10px);
+    background: var(--deep); color: var(--cream);
+    padding: 10px 12px 10px 18px; border-radius: 999px;
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    letter-spacing: .04em; opacity: 0; transition: all .25s;
+    z-index: 200; box-shadow: 0 6px 20px var(--shadow);
+    pointer-events: none; white-space: nowrap;
+    max-width: 90vw; overflow: hidden; text-overflow: ellipsis;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+  .toast.error { background: var(--c1); }
+  .toast .toast-msg {
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .toast .undo-btn {
+    background: var(--c3); color: var(--deep);
+    border: none; border-radius: 999px;
+    padding: 6px 14px; font-family: inherit;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    cursor: pointer; flex-shrink: 0;
+    transition: transform .1s;
+  }
+  .toast .undo-btn:active { transform: scale(0.95); }
+
+  .install-banner {
+    background: linear-gradient(135deg, var(--deep) 0%, #1a3a6e 100%);
+    color: var(--cream); border-radius: 14px;
+    padding: 12px 14px; margin-bottom: 14px;
+    font-family: 'Fraunces', serif; font-size: 13px;
+    display: none; align-items: center; gap: 10px;
+    box-shadow: 0 6px 16px var(--shadow);
+  }
+  .install-banner.show { display: flex; }
+  .install-banner .close {
+    background: none; border: none; color: var(--cream); opacity: .7;
+    cursor: pointer; font-size: 18px; padding: 0 4px;
+  }
+
+  /* Error boundary - shown if app catastrophically fails */
+  .error-screen {
+    display: none; position: fixed; inset: 0;
+    background: var(--cream); z-index: 9999;
+    padding: 40px 24px; text-align: center;
+    color: var(--deep); align-items: center; justify-content: center;
+    flex-direction: column;
+  }
+  .error-screen.show { display: flex; }
+  .error-screen h2 { font-family: 'Bagel Fat One', cursive; font-size: 32px; margin-bottom: 12px; }
+  .error-screen p { font-family: 'Fraunces', serif; font-style: italic; margin-bottom: 20px; max-width: 320px; }
+  .error-screen button {
+    background: var(--c1); color: white;
+    border: 2px solid var(--deep); border-radius: 12px;
+    padding: 12px 24px; font-family: 'DM Mono', monospace;
+    font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body data-vibe="miami">
+
+<!-- Error boundary -->
+<div class="error-screen" id="errorScreen">
+  <h2>Whoops!</h2>
+  <p id="errorMsg">Something went sideways. Your data is safe.</p>
+  <button id="errorReload">Reload App</button>
+</div>
+
+<div class="container">
+
+  <div class="install-banner" id="installBanner">
+    <span>📲 Add to Home Screen — tap share → "Add to Home Screen"</span>
+    <button class="close" id="dismissInstall" aria-label="Dismiss">×</button>
+  </div>
+
+  <div class="topbar">
+    <div class="trip-switcher" id="tripSwitcher" role="button" tabindex="0">
+      <div class="flag" id="tsFlag">🌴</div>
+      <div class="info">
+        <div class="label">Current Trip</div>
+        <div class="name" id="tsName">Miami</div>
+      </div>
+      <div class="chev">⌄</div>
+    </div>
+    <button class="new-trip-btn" id="newTripBtn" aria-label="New trip">+</button>
+  </div>
+
+  <header>
+    <span class="palm left">🌴</span>
+    <span class="palm right">🌴</span>
+    <div class="eyebrow" id="eyebrow">Trip · Tracker</div>
+    <h1 id="tripTitle">Miami</h1>
+    <div class="tagline" id="tagline">every dollar, sun-soaked &amp; accounted for</div>
+  </header>
+
+  <div class="totals">
+    <div class="totals-label">Total Spent</div>
+    <div class="total-amount" id="totalAmount">$0<span class="cents">.00</span></div>
+
+    <div class="budget-section">
+      <div class="budget-row">
+        <span>Budget</span>
+        <span><span id="budgetUsed">set a budget →</span> · <button class="budget-edit" id="setBudgetBtn">edit</button></span>
+      </div>
+      <div class="budget-bar">
+        <div class="budget-fill" id="budgetFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="totals-grid">
+      <div class="stat">
+        <div class="stat-label">Items</div>
+        <div class="stat-value accent" id="txCount">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Your Share</div>
+        <div class="stat-value warm tiny" id="yourShare">$0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Owed To You</div>
+        <div class="stat-value tiny" id="owedToYou">$0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="split-card">
+    <div class="head">
+      <h3>Who Owes Who</h3>
+      <button class="manage" id="managePeopleBtn">manage squad</button>
+    </div>
+    <div class="balance-list" id="balanceList"></div>
+  </div>
+
+  <div class="filters" id="filters"></div>
+
+  <div class="section-title">
+    <span>Recent</span>
+    <span id="visibleCount">0 items</span>
+  </div>
+
+  <div class="expense-list" id="expenseList"></div>
+
+  <div class="util-row">
+    <button class="util-btn" id="exportBtn">⬇ Export CSV</button>
+    <button class="util-btn" id="backupBtn">💾 Backup</button>
+    <button class="util-btn danger" id="clearBtn">⌫ Clear Trip</button>
+  </div>
+
+</div>
+
+<button class="fab" id="addFab" aria-label="Add expense">
+  <span class="plus">+</span>
+  <span>Add Expense</span>
+</button>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span class="toast-msg" id="toastMsg"></span>
+  <button type="button" class="undo-btn" id="undoBtn" style="display:none;">Undo</button>
+</div>
+
+<!-- Expense modal -->
+<div class="modal-overlay" id="expenseModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">New Expense</div>
+    <div class="modal-sub">what'd you spend on?</div>
+
+    <div class="field">
+      <label for="inputAmount">Amount</label>
+      <div class="amount-input">
+        <input type="number" id="inputAmount" inputmode="decimal" step="0.01" min="0" placeholder="0.00" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="inputTitle">What was it?</label>
+      <input type="text" id="inputTitle" placeholder="e.g. dinner at Trattoria" maxlength="60" autocomplete="off" />
+    </div>
+
+    <div class="field">
+      <label>Category</label>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+
+    <div class="field">
+      <label>Who's in on this? <span style="opacity:.5; text-transform:none; letter-spacing:0;">(tap to include)</span></label>
+      <div class="people-grid" id="peopleGrid"></div>
+    </div>
+
+    <div class="field">
+      <label>Default Payback <span style="opacity:.5; text-transform:none; letter-spacing:0;">(adjust per person after)</span></label>
+      <div class="payback-toggle">
+        <button type="button" class="payback-opt active" data-pb="owed">
+          <span class="pb-em">💰</span>
+          <span class="pb-name">Owed back</span>
+          <span class="pb-sub">they'll pay me</span>
+        </button>
+        <button type="button" class="payback-opt" data-pb="treat">
+          <span class="pb-em">🎁</span>
+          <span class="pb-name">My treat</span>
+          <span class="pb-sub">on me, no payback</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="split-preview" id="splitPreview">
+      <span class="big">$0.00</span>
+      <span class="small">your share</span>
+    </div>
+
+    <div class="field" style="margin-top: 14px;">
+      <label for="inputDate">Date</label>
+      <input type="date" id="inputDate" />
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-cancel" id="cancelExpenseBtn">Cancel</button>
+      <button class="btn btn-save" id="saveExpenseBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Trip list modal -->
+<div class="modal-overlay" id="tripListModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Your Trips</div>
+    <div class="modal-sub">tap to switch</div>
+    <div class="trip-list" id="tripList"></div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" id="closeTripListBtn">Close</button>
+      <button class="btn btn-save" id="openNewTripBtn">+ New Trip</button>
+    </div>
+  </div>
+</div>
+
+<!-- New trip modal -->
+<div class="modal-overlay" id="newTripModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">New Trip</div>
+    <div class="modal-sub">where to next?</div>
+    <div class="field">
+      <label for="newTripName">Trip Name</label>
+      <input type="text" id="newTripName" placeholder="e.g. Italy, Tokyo, Lisbon" maxlength="40" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label>Pick a Vibe</label>
+      <div class="vibe-grid" id="vibeGrid"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" id="cancelNewTripBtn">Cancel</button>
+      <button class="btn btn-save" id="saveNewTripBtn">Create Trip</button>
+    </div>
+  </div>
+</div>
+
+<!-- Manage people modal -->
+<div class="modal-overlay" id="peopleModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Trip Squad</div>
+    <div class="modal-sub">who's traveling with you?</div>
+    <div class="field">
+      <label>Current People</label>
+      <div class="people-grid" id="managePeopleGrid"></div>
+    </div>
+    <div class="field">
+      <label for="newPersonName">Add Someone</label>
+      <div class="add-person-row">
+        <input type="text" id="newPersonName" placeholder="Name" maxlength="20" autocomplete="off" />
+        <button class="add-person-btn" id="addPersonBtn">Add</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-save" id="closePeopleBtn" style="flex:1;">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Person detail modal — tap a name on Who Owes Who to open this -->
+<div class="modal-overlay" id="personModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="person-hero">
+      <div class="person-avatar-big" id="personAvatar">A</div>
+      <div>
+        <div class="modal-title" id="personName">Person</div>
+        <div class="modal-sub" id="personSubtitle">tap any item to settle just that one</div>
+      </div>
+    </div>
+
+    <div class="person-stats">
+      <div class="pstat">
+        <div class="pstat-label">Total Spent With</div>
+        <div class="pstat-value" id="pStatTotal">$0</div>
+      </div>
+      <div class="pstat">
+        <div class="pstat-label">Their Share</div>
+        <div class="pstat-value warm" id="pStatShare">$0</div>
+      </div>
+    </div>
+
+    <div class="status-panel">
+      <div class="status-row treated">
+        <div class="status-left">
+          <span class="status-em">🎁</span>
+          <div class="status-text">
+            <div class="status-label">Treated</div>
+            <div class="status-sub" id="pStatTreatedCount">0 items</div>
+          </div>
+        </div>
+        <div class="status-amt" id="pStatTreated">$0</div>
+      </div>
+      <div class="status-row paidback">
+        <div class="status-left">
+          <span class="status-em">✓</span>
+          <div class="status-text">
+            <div class="status-label">Paid Back</div>
+            <div class="status-sub" id="pStatPaidBackCount">0 items</div>
+          </div>
+        </div>
+        <div class="status-amt" id="pStatPaidBack">$0</div>
+      </div>
+      <div class="status-row owed">
+        <div class="status-left">
+          <span class="status-em">💰</span>
+          <div class="status-text">
+            <div class="status-label">Still Owed</div>
+            <div class="status-sub" id="pStatOwedCount">0 items</div>
+          </div>
+        </div>
+        <div class="status-amt" id="pStatOutstanding">$0</div>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:14px;">
+      <label>Every Shared Expense</label>
+      <div id="personExpenseList" class="person-exp-list"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-cancel" id="closePersonBtn" style="flex:1;">Close</button>
+      <button class="btn btn-save" id="settleAllBtn">Settle All</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ============================================================
+  // ERROR BOUNDARY — catches anything that escapes
+  // ============================================================
+  window.addEventListener('error', (e) => {
+    showErrorScreen(e.message || 'Unknown error');
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    showErrorScreen(e.reason ? String(e.reason) : 'Async error');
+  });
+  function showErrorScreen(msg) {
+    try {
+      const el = document.getElementById('errorScreen');
+      const msgEl = document.getElementById('errorMsg');
+      if (el && msgEl) {
+        msgEl.textContent = "Something went sideways but your data is safe. Reload to continue.";
+        el.classList.add('show');
+      }
+    } catch (e) {}
+  }
+  const reloadBtn = document.getElementById('errorReload');
+  if (reloadBtn) reloadBtn.addEventListener('click', () => location.reload());
+
+  // ============================================================
+  // SAFE STORAGE — survives quotas, private mode, etc.
+  // ============================================================
+  const STORAGE_KEY = 'trip_money_v2';
+  const BACKUP_KEY = 'trip_money_v2_backup';
+  let storageWorks = true;
+  try {
+    const t = '__sw__';
+    localStorage.setItem(t, t);
+    localStorage.removeItem(t);
+  } catch (e) { storageWorks = false; }
+
+  const mem = {};
+  function storeGet(k) {
+    try { return storageWorks ? localStorage.getItem(k) : (mem[k] || null); }
+    catch (e) { return mem[k] || null; }
+  }
+  function storeSet(k, v) {
+    try {
+      if (storageWorks) {
+        localStorage.setItem(k, v);
+      } else {
+        mem[k] = v;
+      }
+      return true;
+    } catch (e) {
+      // Quota exceeded — try clearing the backup
+      try {
+        if (storageWorks && k === STORAGE_KEY) {
+          localStorage.removeItem(BACKUP_KEY);
+          localStorage.setItem(k, v);
+          return true;
+        }
+      } catch (e2) {}
+      mem[k] = v;
+      return false;
+    }
+  }
+
+  // ============================================================
+  // CONSTANTS
+  // ============================================================
+  const CATEGORIES = [
+    { id: 'food',    name: 'Food',    emoji: '🍴', color: '#ff8c42' },
+    { id: 'drinks',  name: 'Drinks',  emoji: '🍹', color: '#ff3d7f' },
+    { id: 'hotel',   name: 'Stay',    emoji: '🏨', color: '#7b2cbf' },
+    { id: 'transit', name: 'Transit', emoji: '🚖', color: '#ffd23f' },
+    { id: 'fun',     name: 'Fun',     emoji: '🎉', color: '#ff1e9c' },
+    { id: 'shop',    name: 'Shop',    emoji: '🛍️', color: '#4ecdc4' },
+    { id: 'tickets', name: 'Tickets', emoji: '🎟️', color: '#00d4c4' },
+    { id: 'other',   name: 'Other',   emoji: '💸', color: '#0a1f44' }
+  ];
+
+  const VIBES = [
+    { id: 'miami',    em: '🌴', name: 'Miami',    tagline: 'every dollar, sun-soaked & accounted for' },
+    { id: 'italy',    em: '🍝', name: 'Italy',    tagline: 'la dolce vita, one euro at a time' },
+    { id: 'japan',    em: '🌸', name: 'Japan',    tagline: 'mindful spending, kawaii style' },
+    { id: 'greece',   em: '🏛️', name: 'Greece',   tagline: 'opa! tracking your aegean adventure' },
+    { id: 'mexico',   em: '🌵', name: 'Mexico',   tagline: "vamos! every peso pictured" },
+    { id: 'france',   em: '🥐', name: 'France',   tagline: "c'est la vie — and the bill" },
+    { id: 'thailand', em: '🌶️', name: 'Thailand', tagline: 'sawasdee, sunny spending' },
+    { id: 'iceland',  em: '❄️', name: 'Iceland',  tagline: 'chilly krónur, warm memories' },
+    { id: 'nyc',      em: '🗽', name: 'NYC',      tagline: 'concrete jungle, concrete budget' },
+    { id: 'hawaii',   em: '🌺', name: 'Hawaii',   tagline: 'aloha to easy splitting' },
+    { id: 'default',  em: '✈️', name: 'Generic',  tagline: 'plan it, spend it, split it' }
+  ];
+
+  const VIBE_BY_ID = {};
+  VIBES.forEach(v => { VIBE_BY_ID[v.id] = v; });
+  const CAT_BY_ID = {};
+  CATEGORIES.forEach(c => { CAT_BY_ID[c.id] = c; });
+
+  const OWES_PHRASES = ['owes you', 'on the hook for', 'has a tab of', 'still owes', 'IOU:'];
+  const OWE_PHRASES = ['you owe', 'your tab:', 'pay them back', 'on you for'];
+
+  function pickPhrase(arr, amt) {
+    const idx = Math.floor(Math.abs(amt) * 100) % arr.length;
+    return arr[idx];
+  }
+
+  // ============================================================
+  // STATE
+  // ============================================================
+  let data = { activeTripId: null, trips: {} };
+  let editingExpenseId = null;
+  let activeFilter = 'all';
+  let selectedCat = 'food';
+  let selectedPeopleIds = [];
+  let selectedPayback = 'owed';
+  let newTripVibe = 'default';
+
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  // ============================================================
+  // SCHEMA VALIDATION — recover from corrupted/foreign data
+  // ============================================================
+  function isFiniteNumber(n) {
+    return typeof n === 'number' && isFinite(n) && !isNaN(n);
+  }
+
+  function sanitizeTrip(t) {
+    if (!t || typeof t !== 'object') return null;
+    const trip = {
+      id: typeof t.id === 'string' ? t.id : uid(),
+      name: typeof t.name === 'string' ? t.name.slice(0, 60) : 'Untitled Trip',
+      vibe: (typeof t.vibe === 'string' && VIBE_BY_ID[t.vibe]) ? t.vibe : 'default',
+      budget: isFiniteNumber(t.budget) && t.budget >= 0 ? t.budget : 0,
+      people: [],
+      expenses: [],
+      createdAt: isFiniteNumber(t.createdAt) ? t.createdAt : Date.now()
+    };
+    if (Array.isArray(t.people)) {
+      const seen = {};
+      t.people.forEach(p => {
+        if (!p || typeof p !== 'object') return;
+        const id = typeof p.id === 'string' ? p.id : uid();
+        if (seen[id]) return;
+        seen[id] = true;
+        trip.people.push({
+          id,
+          name: typeof p.name === 'string' ? p.name.slice(0, 40) : 'Friend',
+          isMe: p.isMe === true
+        });
+      });
+    }
+    // Ensure exactly one Me person
+    if (!trip.people.some(p => p.isMe)) {
+      trip.people.unshift({ id: uid(), name: 'Me', isMe: true });
+    }
+    if (trip.people.filter(p => p.isMe).length > 1) {
+      let foundMe = false;
+      trip.people.forEach(p => {
+        if (p.isMe && foundMe) p.isMe = false;
+        if (p.isMe) foundMe = true;
+      });
+    }
+    const validPeopleIds = new Set(trip.people.map(p => p.id));
+    const meId = trip.people.find(p => p.isMe).id;
+
+    if (Array.isArray(t.expenses)) {
+      t.expenses.forEach(e => {
+        if (!e || typeof e !== 'object') return;
+        if (!isFiniteNumber(e.amount) || e.amount < 0) return;
+
+        // Settled status per person (object: { personId: true })
+        let settledBy = {};
+        if (e.settledBy && typeof e.settledBy === 'object') {
+          Object.keys(e.settledBy).forEach(pid => {
+            if (validPeopleIds.has(pid) && e.settledBy[pid]) {
+              settledBy[pid] = true;
+            }
+          });
+        }
+
+        // Per-person payback status: { personId: 'owed' | 'treat' }
+        // Migration: if old `payback` field exists, apply it to all non-me people.
+        // If neither exists, default to 'owed' for everyone.
+        let paybackBy = {};
+        if (e.paybackBy && typeof e.paybackBy === 'object') {
+          Object.keys(e.paybackBy).forEach(pid => {
+            if (validPeopleIds.has(pid)) {
+              paybackBy[pid] = (e.paybackBy[pid] === 'treat') ? 'treat' : 'owed';
+            }
+          });
+        }
+        // Migration from old top-level `payback` field
+        const legacyPayback = (e.payback === 'treat') ? 'treat' : 'owed';
+        const splitWithFinal = Array.isArray(e.splitWith)
+          ? e.splitWith.filter(id => validPeopleIds.has(id))
+          : [meId];
+        if (splitWithFinal.length === 0) splitWithFinal.push(meId);
+        splitWithFinal.forEach(pid => {
+          if (!(pid in paybackBy)) {
+            paybackBy[pid] = legacyPayback;
+          }
+        });
+
+        trip.expenses.push({
+          id: typeof e.id === 'string' ? e.id : uid(),
+          amount: e.amount,
+          title: typeof e.title === 'string' ? e.title.slice(0, 200) : '',
+          category: (typeof e.category === 'string' && CAT_BY_ID[e.category]) ? e.category : 'other',
+          splitWith: splitWithFinal,
+          paidBy: validPeopleIds.has(e.paidBy) ? e.paidBy : meId,
+          date: isFiniteNumber(e.date) ? e.date : Date.now(),
+          settledBy,
+          paybackBy
+        });
+      });
+    }
+    return trip;
+  }
+
+  function sanitizeData(d) {
+    const safe = { activeTripId: null, trips: {} };
+    if (!d || typeof d !== 'object') return safe;
+    if (d.trips && typeof d.trips === 'object') {
+      Object.values(d.trips).forEach(t => {
+        const clean = sanitizeTrip(t);
+        if (clean) safe.trips[clean.id] = clean;
+      });
+    }
+    const tripIds = Object.keys(safe.trips);
+    if (tripIds.length === 0) return safe;
+    safe.activeTripId = (typeof d.activeTripId === 'string' && safe.trips[d.activeTripId])
+      ? d.activeTripId
+      : tripIds[0];
+    return safe;
+  }
+
+  function loadData() {
+    let parsed = null;
+    try {
+      const raw = storeGet(STORAGE_KEY);
+      if (raw) parsed = JSON.parse(raw);
+    } catch (e) {
+      // Try backup
+      try {
+        const backupRaw = storeGet(BACKUP_KEY);
+        if (backupRaw) parsed = JSON.parse(backupRaw);
+      } catch (e2) {}
+    }
+    data = sanitizeData(parsed);
+
+    if (Object.keys(data.trips).length === 0) {
+      const tripId = uid();
+      const meId = uid();
+      data = {
+        activeTripId: tripId,
+        trips: {
+          [tripId]: {
+            id: tripId,
+            name: 'Miami',
+            vibe: 'miami',
+            budget: 0,
+            people: [{ id: meId, name: 'Me', isMe: true }],
+            expenses: [],
+            createdAt: Date.now()
+          }
+        }
+      };
+      saveData();
+    }
+  }
+
+  let saveTimer = null;
+  function saveData() {
+    // Debounce frequent saves
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try {
+        const json = JSON.stringify(data);
+        const ok = storeSet(STORAGE_KEY, json);
+        if (ok) {
+          // Keep a backup of the previous save (only every 10th save to save space)
+          try {
+            const lastBackup = parseInt(storeGet('last_backup_ts') || '0', 10);
+            if (Date.now() - lastBackup > 60000) {
+              storeSet(BACKUP_KEY, json);
+              storeSet('last_backup_ts', String(Date.now()));
+            }
+          } catch (e) {}
+        }
+      } catch (e) {}
+      saveTimer = null;
+    }, 200);
+  }
+  function saveDataImmediate() {
+    if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+    try { storeSet(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+  }
+  // Force save on tab close/blur
+  window.addEventListener('beforeunload', saveDataImmediate);
+  window.addEventListener('pagehide', saveDataImmediate);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') saveDataImmediate();
+  });
+
+  function activeTrip() { return data.trips[data.activeTripId]; }
+  function me() {
+    const trip = activeTrip();
+    if (!trip) return null;
+    return trip.people.find(p => p.isMe);
+  }
+
+  // ============================================================
+  // HELPERS
+  // ============================================================
+  function $(id) { return document.getElementById(id); }
+
+  function fmtMoney(n) {
+    if (!isFiniteNumber(n)) return '$0.00';
+    return (n < 0 ? '-' : '') + '$' + Math.abs(n).toFixed(2);
+  }
+  function escapeHtml(s) {
+    if (s === null || s === undefined) return '';
+    return String(s).replace(/[&<>"']/g, c =>
+      ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]
+    );
+  }
+
+  // ============================================================
+  // BALANCE COMPUTATION (per-expense settling)
+  // ============================================================
+  // For each expense, person X owes you (or you owe them) their share,
+  // UNLESS that expense.settledBy[X] === true.
+  // An expense is "fully settled" when every non-me person in the split
+  // is either marked treat OR settled. (Solo expenses don't count.)
+  function isExpenseFullySettled(e, meP) {
+    const splitCount = (e.splitWith || []).length;
+    if (splitCount <= 1) return false;
+    const others = e.splitWith.filter(id => id !== meP.id);
+    if (others.length === 0) return false;
+    const paybackBy = e.paybackBy || {};
+    const settled = e.settledBy || {};
+    return others.every(pid =>
+      paybackBy[pid] === 'treat' || settled[pid]
+    );
+  }
+
+  // Returns true if every non-me person in the expense is a treat (i.e. nothing to settle)
+  function isAllTreats(e, meP) {
+    const others = (e.splitWith || []).filter(id => id !== meP.id);
+    if (others.length === 0) return false;
+    const paybackBy = e.paybackBy || {};
+    return others.every(pid => paybackBy[pid] === 'treat');
+  }
+
+  function computeBalances() {
+    const trip = activeTrip();
+    if (!trip) return {};
+    const meP = me();
+    if (!meP) return {};
+    const balances = {};
+    trip.people.forEach(p => { if (!p.isMe) balances[p.id] = 0; });
+
+    trip.expenses.forEach(e => {
+      const splitCount = (e.splitWith || []).length;
+      if (splitCount === 0) return;
+      const perPerson = e.amount / splitCount;
+      const paidBy = e.paidBy || meP.id;
+      const settled = e.settledBy || {};
+      const paybackBy = e.paybackBy || {};
+
+      if (paidBy === meP.id) {
+        e.splitWith.forEach(pid => {
+          if (pid !== meP.id && balances[pid] !== undefined && !settled[pid]) {
+            // Skip if this person is marked as a treat
+            if (paybackBy[pid] === 'treat') return;
+            balances[pid] += perPerson;
+          }
+        });
+      } else {
+        if (e.splitWith.includes(meP.id) && balances[paidBy] !== undefined && !settled[meP.id]) {
+          // Skip if you (me) are marked as a treat by them
+          if (paybackBy[meP.id] === 'treat') return;
+          balances[paidBy] -= perPerson;
+        }
+      }
+    });
+    return balances;
+  }
+
+  // ============================================================
+  // RENDER — uses replaceChildren/textContent where possible
+  // No event delegation to avoid leaks — fresh handlers each render
+  // ============================================================
+  function applyVibe() {
+    const trip = activeTrip();
+    if (!trip) return;
+    document.body.dataset.vibe = trip.vibe || 'default';
+    const vibe = VIBE_BY_ID[trip.vibe] || VIBE_BY_ID.default;
+    $('tsFlag').textContent = vibe.em;
+    $('tsName').textContent = trip.name;
+    $('tripTitle').textContent = trip.name;
+    $('tagline').textContent = vibe.tagline;
+    // Theme color
+    try {
+      const c1 = getComputedStyle(document.body).getPropertyValue('--c1').trim();
+      if (c1) $('themeColorMeta').setAttribute('content', c1);
+    } catch (e) {}
+  }
+
+  function renderTotals() {
+    const trip = activeTrip();
+    if (!trip) return;
+    const meP = me();
+    const total = trip.expenses.reduce((s, e) => s + e.amount, 0);
+
+    const whole = Math.floor(total);
+    const cents = (total % 1).toFixed(2).slice(2);
+    $('totalAmount').innerHTML = '$' + whole + '<span class="cents">.' + cents + '</span>';
+
+    if (trip.budget > 0) {
+      const pct = Math.min(100, (total / trip.budget) * 100);
+      $('budgetFill').style.width = pct + '%';
+      $('budgetFill').classList.toggle('over', total > trip.budget);
+      const remaining = trip.budget - total;
+      $('budgetUsed').textContent = remaining >= 0
+        ? fmtMoney(remaining) + ' left of ' + fmtMoney(trip.budget)
+        : 'over by ' + fmtMoney(-remaining);
+    } else {
+      $('budgetFill').style.width = '0%';
+      $('budgetFill').classList.remove('over');
+      $('budgetUsed').textContent = 'set a budget →';
+    }
+
+    $('txCount').textContent = trip.expenses.length;
+
+    let yourShare = 0;
+    trip.expenses.forEach(e => {
+      const splitCount = (e.splitWith || []).length;
+      if (splitCount === 0) return;
+      const youAreIn = e.splitWith.includes(meP.id);
+      if (youAreIn) yourShare += e.amount / splitCount;
+    });
+    $('yourShare').textContent = fmtMoney(yourShare);
+
+    // Owed to you = sum of positive balances
+    const balances = computeBalances();
+    let owed = 0;
+    Object.values(balances).forEach(b => { if (b > 0) owed += b; });
+    const owedEl = $('owedToYou');
+    owedEl.textContent = fmtMoney(owed);
+    owedEl.classList.toggle('pos', owed > 0.005);
+    owedEl.classList.toggle('neg', owed < -0.005);
+  }
+
+  function renderBalances() {
+    const trip = activeTrip();
+    const list = $('balanceList');
+    if (!trip) { list.textContent = ''; return; }
+    const others = trip.people.filter(p => !p.isMe);
+
+    if (others.length === 0) {
+      list.innerHTML = '<div class="empty-split">Add people to split expenses with →</div>';
+      return;
+    }
+
+    const balances = computeBalances();
+    const frag = document.createDocumentFragment();
+
+    others.forEach(p => {
+      const bal = balances[p.id] || 0;
+      const absBal = Math.abs(bal);
+      let cls = 'settled', phrase = 'all settled up', amt = '✓';
+      if (absBal > 0.005) {
+        if (bal > 0) {
+          cls = 'owes-you';
+          phrase = pickPhrase(OWES_PHRASES, absBal);
+          amt = fmtMoney(absBal);
+        } else {
+          cls = 'you-owe';
+          phrase = pickPhrase(OWE_PHRASES, absBal);
+          amt = fmtMoney(absBal);
+        }
+      }
+      const initial = (p.name && p.name.trim()[0] ? p.name.trim()[0] : '?').toUpperCase();
+      const row = document.createElement('div');
+      row.className = 'balance-row clickable ' + cls;
+      row.innerHTML =
+        '<div class="avatar">' + escapeHtml(initial) + '</div>' +
+        '<div class="name">' + escapeHtml(p.name) + '</div>' +
+        '<span class="phrase">' + escapeHtml(phrase) + '</span>' +
+        '<span class="amt">' + escapeHtml(amt) + '</span>' +
+        '<span class="chev">›</span>';
+      row.addEventListener('click', () => openPersonModal(p.id));
+      frag.appendChild(row);
+    });
+
+    list.replaceChildren(frag);
+  }
+
+  function renderFilters() {
+    const trip = activeTrip();
+    const wrap = $('filters');
+    if (!trip) { wrap.textContent = ''; return; }
+    const counts = { all: trip.expenses.length };
+    CATEGORIES.forEach(c => { counts[c.id] = 0; });
+    trip.expenses.forEach(e => {
+      if (counts[e.category] !== undefined) counts[e.category]++;
+    });
+
+    const items = [{ id: 'all', name: 'All', emoji: '✦' }]
+      .concat(CATEGORIES.filter(c => counts[c.id] > 0));
+
+    const frag = document.createDocumentFragment();
+    items.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'chip' + (activeFilter === c.id ? ' active' : '');
+      btn.innerHTML = escapeHtml(c.emoji) + ' ' + escapeHtml(c.name) +
+        ' <span class="count">' + counts[c.id] + '</span>';
+      btn.addEventListener('click', () => {
+        activeFilter = c.id;
+        renderFilters();
+        renderList();
+      });
+      frag.appendChild(btn);
+    });
+    wrap.replaceChildren(frag);
+  }
+
+  function renderList() {
+    const trip = activeTrip();
+    const el = $('expenseList');
+    if (!trip) { el.textContent = ''; return; }
+    const meP = me();
+    const filtered = activeFilter === 'all'
+      ? trip.expenses
+      : trip.expenses.filter(e => e.category === activeFilter);
+    const sorted = filtered.slice().sort((a, b) => b.date - a.date);
+
+    $('visibleCount').textContent = sorted.length + ' ' + (sorted.length === 1 ? 'item' : 'items');
+
+    if (sorted.length === 0) {
+      el.innerHTML = '<div class="empty"><span class="em">📝</span><div>No expenses yet. Tap "+ Add Expense" to start.</div></div>';
+      return;
+    }
+
+    const frag = document.createDocumentFragment();
+    sorted.forEach(e => {
+      const cat = CAT_BY_ID[e.category] || CAT_BY_ID.other;
+      const date = new Date(e.date);
+      let dateStr = '—';
+      try { dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); } catch (er) {}
+      const splitCount = (e.splitWith || []).length;
+      const youAreIn = e.splitWith.includes(meP.id);
+      const yourShare = (splitCount && youAreIn) ? e.amount / splitCount : 0;
+      const paybackBy = e.paybackBy || {};
+      const others = e.splitWith.filter(id => id !== meP.id);
+      const treatCount = others.filter(pid => paybackBy[pid] === 'treat').length;
+      const owedCount = others.length - treatCount;
+      const allTreats = others.length > 0 && treatCount === others.length;
+      const isMixed = treatCount > 0 && owedCount > 0;
+      const fullySettled = isExpenseFullySettled(e, meP);
+
+      const card = document.createElement('div');
+      card.className = 'expense-card' +
+        (fullySettled && !allTreats ? ' is-settled' : '') +
+        (allTreats ? ' is-treat' : '');
+
+      // Cat icon
+      const catIcon = document.createElement('div');
+      catIcon.className = 'cat-icon';
+      catIcon.style.background = cat.color + '22';
+      catIcon.style.color = cat.color;
+      catIcon.textContent = cat.emoji;
+      card.appendChild(catIcon);
+
+      // Body
+      const body = document.createElement('div');
+      body.className = 'ex-body';
+      let splitInfoHtml = '';
+      if (allTreats) {
+        if (others.length === 1) {
+          const otherP = trip.people.find(p => p.id === others[0]);
+          splitInfoHtml = '<div class="ex-split-info settled">🎁 your treat for ' + escapeHtml(otherP ? otherP.name : 'them') + '</div>';
+        } else {
+          splitInfoHtml = '<div class="ex-split-info settled">🎁 your treat for ' + others.length + ' people</div>';
+        }
+      } else if (isMixed) {
+        // Mixed: some owe, some are treats
+        const settledOwed = others.filter(pid => paybackBy[pid] !== 'treat' && e.settledBy && e.settledBy[pid]).length;
+        if (settledOwed === owedCount) {
+          splitInfoHtml = '<div class="ex-split-info settled">✓ all squared up · ' + treatCount + ' treat' + (treatCount > 1 ? 's' : '') + '</div>';
+        } else {
+          splitInfoHtml = '<div class="ex-split-info">' + owedCount + ' owes · ' + treatCount + ' treat' + (treatCount > 1 ? 's' : '') + (settledOwed > 0 ? ' · ' + settledOwed + '/' + owedCount + ' settled' : '') + '</div>';
+        }
+      } else if (splitCount > 1) {
+        // All owed
+        const settledCount = others.filter(pid => e.settledBy && e.settledBy[pid]).length;
+        if (settledCount === others.length && others.length > 0) {
+          splitInfoHtml = '<div class="ex-split-info settled">✓ all squared up</div>';
+        } else if (settledCount > 0) {
+          splitInfoHtml = '<div class="ex-split-info">split ' + splitCount + ' ways · ' + settledCount + '/' + others.length + ' settled</div>';
+        } else {
+          splitInfoHtml = '<div class="ex-split-info">split ' + splitCount + ' ways' + (youAreIn ? '' : ' (you paid only)') + '</div>';
+        }
+      } else if (splitCount === 1 && !youAreIn) {
+        const otherP = trip.people.find(p => p.id === e.splitWith[0]);
+        const fullyDone = e.settledBy && e.settledBy[e.splitWith[0]];
+        const isTr = paybackBy[e.splitWith[0]] === 'treat';
+        splitInfoHtml = isTr
+          ? '<div class="ex-split-info settled">🎁 your treat for ' + escapeHtml(otherP ? otherP.name : 'them') + '</div>'
+          : (fullyDone
+            ? '<div class="ex-split-info settled">✓ they paid you back</div>'
+            : '<div class="ex-split-info">paid for ' + escapeHtml(otherP ? otherP.name : 'someone') + '</div>');
+      }
+      const titleHtml = '<div class="ex-title">' + escapeHtml(e.title || cat.name) +
+        (allTreats ? '<span class="treat-badge">treat</span>' : '') +
+        (isMixed ? '<span class="mixed-badge">mixed</span>' : '') +
+        '</div>';
+      body.innerHTML =
+        titleHtml +
+        '<div class="ex-meta">' + escapeHtml(cat.name) + ' · ' + escapeHtml(dateStr) + '</div>' +
+        splitInfoHtml;
+      card.appendChild(body);
+
+      // Right
+      const right = document.createElement('div');
+      right.className = 'ex-right';
+      let rightHtml = '<div class="ex-amount">' + fmtMoney(e.amount) + '</div>';
+      if (splitCount > 1 && !allTreats) {
+        rightHtml += '<div class="ex-your-share">' + (youAreIn ? 'you: ' + fmtMoney(yourShare) : 'they owe ' + fmtMoney(e.amount)) + '</div>';
+      } else if (allTreats && splitCount > 1) {
+        rightHtml += '<div class="ex-your-share">' + fmtMoney(e.amount / splitCount) + ' each</div>';
+      }
+      right.innerHTML = rightHtml;
+      card.appendChild(right);
+
+      // Row actions: show Settle buttons only for people who are owed (not treats)
+      const actions = document.createElement('div');
+      actions.className = 'row-actions';
+
+      const owedPeople = others.filter(pid => paybackBy[pid] !== 'treat');
+      owedPeople.forEach(pid => {
+        const person = trip.people.find(pp => pp.id === pid);
+        if (!person) return;
+        const isSettled = e.settledBy && e.settledBy[pid];
+        const btn = document.createElement('button');
+        btn.className = 'row-action primary';
+        const firstName = (person.name || '').split(' ')[0];
+        btn.textContent = isSettled ? '✓ ' + firstName + ' paid' : 'Settle ' + firstName;
+        btn.disabled = !!isSettled;
+        btn.addEventListener('click', () => toggleSettle(e.id, pid));
+        actions.appendChild(btn);
+      });
+
+      const del = document.createElement('button');
+      del.className = 'row-action warn';
+      del.textContent = '× Delete';
+      del.addEventListener('click', () => deleteExpense(e.id));
+      actions.appendChild(del);
+
+      card.appendChild(actions);
+
+      frag.appendChild(card);
+    });
+
+    el.replaceChildren(frag);
+  }
+
+  function renderAll() {
+    try {
+      applyVibe();
+      renderTotals();
+      renderBalances();
+      renderFilters();
+      renderList();
+    } catch (e) {
+      console.error('render failed', e);
+    }
+  }
+
+  // ============================================================
+  // PER-EXPENSE SETTLE
+  // ============================================================
+  function toggleSettle(expenseId, personId) {
+    const trip = activeTrip();
+    if (!trip) return;
+    const exp = trip.expenses.find(x => x.id === expenseId);
+    if (!exp) return;
+    if (!exp.settledBy) exp.settledBy = {};
+    const person = trip.people.find(p => p.id === personId);
+    if (exp.settledBy[personId]) {
+      delete exp.settledBy[personId];
+      toast('Unsettled with ' + (person ? person.name : 'them'));
+    } else {
+      exp.settledBy[personId] = true;
+      toast('Settled with ' + (person ? person.name : 'them') + ' ✓');
+    }
+    saveData();
+    renderTotals();
+    renderBalances();
+    renderList();
+    // If person modal is open, refresh it too
+    if ($('personModal').classList.contains('show') && currentPersonId) {
+      renderPersonModal(currentPersonId);
+    }
+  }
+
+  // ============================================================
+  // PERSON DETAIL MODAL — see all shared expenses with one person
+  // ============================================================
+  let currentPersonId = null;
+
+  function openPersonModal(personId) {
+    currentPersonId = personId;
+    renderPersonModal(personId);
+    showModal('personModal');
+  }
+
+  function renderPersonModal(personId) {
+    const trip = activeTrip();
+    if (!trip) return;
+    const person = trip.people.find(p => p.id === personId);
+    if (!person) { hideModal('personModal'); return; }
+    const meP = me();
+    if (!meP) return;
+
+    const initial = (person.name && person.name.trim()[0] ? person.name.trim()[0] : '?').toUpperCase();
+    $('personAvatar').textContent = initial;
+    $('personName').textContent = person.name;
+
+    // Find every expense involving this person
+    const shared = trip.expenses.filter(e =>
+      (e.splitWith || []).includes(personId)
+    );
+    // Sort newest first
+    shared.sort((a, b) => b.date - a.date);
+
+    // Stats - lifetime breakdown with this person
+    let totalSpent = 0;
+    let theirShare = 0;
+    let treatedAmount = 0;
+    let paidBackAmount = 0;
+    let outstanding = 0;
+    let treatedCount = 0;
+    let paidBackCount = 0;
+    let owedCount = 0;
+
+    shared.forEach(e => {
+      const splitCount = (e.splitWith || []).length;
+      if (splitCount === 0) return;
+      const perPerson = e.amount / splitCount;
+      const paybackBy = e.paybackBy || {};
+      const isTreatForThem = paybackBy[personId] === 'treat';
+      const isSettled = !!(e.settledBy && e.settledBy[personId]);
+      totalSpent += e.amount;
+      theirShare += perPerson;
+
+      if (isTreatForThem) {
+        treatedAmount += perPerson;
+        treatedCount++;
+      } else if (isSettled) {
+        // They paid you back for their share
+        paidBackAmount += perPerson;
+        paidBackCount++;
+      } else {
+        // Outstanding — sign depends on who paid
+        if (e.paidBy === meP.id) {
+          if (personId !== meP.id) {
+            outstanding += perPerson;
+            owedCount++;
+          }
+        } else if (e.paidBy === personId) {
+          if (e.splitWith.includes(meP.id)) {
+            outstanding -= perPerson;
+            owedCount++;
+          }
+        }
+      }
+    });
+
+    $('pStatTotal').textContent = fmtMoney(totalSpent);
+    $('pStatShare').textContent = fmtMoney(theirShare);
+
+    // Status panel
+    $('pStatTreated').textContent = fmtMoney(treatedAmount);
+    $('pStatTreatedCount').textContent = treatedCount + ' ' + (treatedCount === 1 ? 'item' : 'items');
+    $('pStatPaidBack').textContent = fmtMoney(paidBackAmount);
+    $('pStatPaidBackCount').textContent = paidBackCount + ' ' + (paidBackCount === 1 ? 'item' : 'items');
+    $('pStatOutstanding').textContent = (Math.abs(outstanding) < 0.005 ? '$0' : fmtMoney(outstanding));
+    $('pStatOwedCount').textContent = owedCount + ' ' + (owedCount === 1 ? 'item' : 'items');
+
+    // Dim rows with zero counts so the live ones pop
+    document.querySelectorAll('.status-row').forEach(r => r.classList.remove('is-zero'));
+    if (treatedCount === 0) document.querySelector('.status-row.treated').classList.add('is-zero');
+    if (paidBackCount === 0) document.querySelector('.status-row.paidback').classList.add('is-zero');
+    if (owedCount === 0) document.querySelector('.status-row.owed').classList.add('is-zero');
+
+    // Subtitle
+    let subtitle = 'tap toggle to set treat or owed';
+    if (shared.length === 0) {
+      subtitle = 'no shared expenses yet';
+    } else if (Math.abs(outstanding) < 0.005 && treatedAmount > 0) {
+      subtitle = "you've treated " + person.name + ' to ' + fmtMoney(treatedAmount);
+    } else if (Math.abs(outstanding) < 0.005) {
+      subtitle = 'all squared up — you two are even';
+    } else if (outstanding > 0) {
+      const treatNote = treatedAmount > 0 ? ' (plus ' + fmtMoney(treatedAmount) + ' in treats)' : '';
+      subtitle = person.name + ' owes you ' + fmtMoney(outstanding) + treatNote;
+    } else {
+      subtitle = 'you owe ' + person.name + ' ' + fmtMoney(-outstanding);
+    }
+    $('personSubtitle').textContent = subtitle;
+
+    // Render expense list
+    const listEl = $('personExpenseList');
+    if (shared.length === 0) {
+      listEl.innerHTML = '<div class="pexp-empty">No shared expenses with ' + escapeHtml(person.name) + ' yet.</div>';
+      // Hide Settle All button
+      $('settleAllBtn').style.display = 'none';
+      return;
+    }
+
+    // Show or hide Settle All depending on whether there's anything to settle
+    const unsettledOwed = shared.filter(e => {
+      const pb = (e.paybackBy || {})[personId];
+      return pb !== 'treat' && !(e.settledBy && e.settledBy[personId]);
+    });
+    const unsettledCount = unsettledOwed.length;
+    $('settleAllBtn').style.display = unsettledCount > 0 ? '' : 'none';
+    $('settleAllBtn').textContent = unsettledCount > 0
+      ? 'Settle All (' + unsettledCount + ')'
+      : 'All Settled';
+
+    const frag = document.createDocumentFragment();
+    shared.forEach(e => {
+      const cat = CAT_BY_ID[e.category] || CAT_BY_ID.other;
+      const splitCount = (e.splitWith || []).length;
+      const perPerson = e.amount / splitCount;
+      const paybackBy = e.paybackBy || {};
+      const isTreatForThem = paybackBy[personId] === 'treat';
+      const isSettled = !!(e.settledBy && e.settledBy[personId]);
+      let dateStr = '—';
+      try { dateStr = new Date(e.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); } catch (er) {}
+
+      const card = document.createElement('div');
+      card.className = 'pexp' + ((isSettled || isTreatForThem) ? ' settled' : '');
+
+      // Status label
+      let statusText;
+      if (isTreatForThem) {
+        statusText = '🎁 your treat';
+      } else if (isSettled) {
+        statusText = '✓ settled';
+      } else {
+        statusText = e.paidBy === meP.id ? 'owes you' : 'you owe';
+      }
+
+      // Layout: title/meta on left, amount + status + per-row controls on right
+      card.innerHTML =
+        '<div class="pexp-body">' +
+          '<div class="pexp-title">' + escapeHtml(cat.emoji) + ' ' + escapeHtml(e.title || cat.name) + '</div>' +
+          '<div class="pexp-meta">' + escapeHtml(dateStr) + ' · split ' + splitCount + ' ways · ' + fmtMoney(e.amount) + ' total</div>' +
+          '<div class="pexp-controls">' +
+            '<button class="pexp-toggle ' + (isTreatForThem ? 'is-treat' : 'is-owed') + '" data-act="toggle">' +
+              (isTreatForThem ? '🎁 Treat' : '💰 Owed') +
+            '</button>' +
+            (!isTreatForThem ? '<button class="pexp-settle" data-act="settle"' + (isSettled ? ' disabled' : '') + '>' + (isSettled ? '✓ Paid' : 'Settle') + '</button>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="pexp-right">' +
+          '<div class="pexp-amt">' + fmtMoney(perPerson) + '</div>' +
+          '<div class="pexp-status">' + escapeHtml(statusText) + '</div>' +
+        '</div>';
+
+      // Wire toggle button
+      const toggleBtn = card.querySelector('[data-act="toggle"]');
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          togglePaybackForPerson(e.id, personId);
+        });
+      }
+      // Wire settle button
+      const settleBtn = card.querySelector('[data-act="settle"]');
+      if (settleBtn) {
+        settleBtn.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          toggleSettle(e.id, personId);
+        });
+      }
+      frag.appendChild(card);
+    });
+    listEl.replaceChildren(frag);
+  }
+
+  // Flip a single person's payback status on a single expense
+  function togglePaybackForPerson(expenseId, personId) {
+    const trip = activeTrip();
+    if (!trip) return;
+    const exp = trip.expenses.find(x => x.id === expenseId);
+    if (!exp) return;
+    if (!exp.paybackBy) exp.paybackBy = {};
+    const cur = exp.paybackBy[personId] === 'treat' ? 'treat' : 'owed';
+    const next = cur === 'treat' ? 'owed' : 'treat';
+    exp.paybackBy[personId] = next;
+    // If switching to treat, also clear any "settled" marker (treat overrides)
+    if (next === 'treat' && exp.settledBy && exp.settledBy[personId]) {
+      delete exp.settledBy[personId];
+    }
+    const person = trip.people.find(p => p.id === personId);
+    const name = person ? person.name : 'them';
+    toast(next === 'treat' ? '🎁 Now a treat for ' + name : '💰 ' + name + ' now owes you');
+    saveData();
+    renderTotals();
+    renderBalances();
+    renderList();
+    if ($('personModal').classList.contains('show') && currentPersonId) {
+      renderPersonModal(currentPersonId);
+    }
+  }
+
+  function settleAllForPerson() {
+    if (!currentPersonId) return;
+    const trip = activeTrip();
+    if (!trip) return;
+    const person = trip.people.find(p => p.id === currentPersonId);
+    if (!person) return;
+    const shared = trip.expenses.filter(e =>
+      (e.splitWith || []).includes(currentPersonId)
+    );
+    const unsettled = shared.filter(e => {
+      const pb = (e.paybackBy || {})[currentPersonId];
+      return pb !== 'treat' && !(e.settledBy && e.settledBy[currentPersonId]);
+    });
+    if (unsettled.length === 0) { toast('Already all settled'); return; }
+    const count = unsettled.length;
+    withUndo('Settled ' + count + ' with ' + person.name, () => {
+      unsettled.forEach(e => {
+        if (!e.settledBy) e.settledBy = {};
+        e.settledBy[currentPersonId] = true;
+      });
+      saveData();
+      renderTotals();
+      renderBalances();
+      renderList();
+      renderPersonModal(currentPersonId);
+    });
+  }
+
+  function deleteExpense(id) {
+    const trip = activeTrip();
+    if (!trip) return;
+    const exp = trip.expenses.find(e => e.id === id);
+    const label = exp && exp.title ? '"' + exp.title + '" deleted' : 'Deleted';
+    withUndo(label, () => {
+      trip.expenses = trip.expenses.filter(e => e.id !== id);
+      saveData();
+      renderAll();
+      // Refresh person modal if open
+      if ($('personModal').classList.contains('show') && currentPersonId) {
+        renderPersonModal(currentPersonId);
+      }
+    });
+  }
+
+  // ============================================================
+  // EXPENSE MODAL
+  // ============================================================
+  function renderCategoryPicker() {
+    const wrap = $('catGrid');
+    const frag = document.createDocumentFragment();
+    CATEGORIES.forEach(c => {
+      const div = document.createElement('div');
+      div.className = 'cat-pick' + (selectedCat === c.id ? ' active' : '');
+      div.innerHTML = '<span class="em">' + escapeHtml(c.emoji) + '</span>' + escapeHtml(c.name);
+      div.addEventListener('click', () => {
+        selectedCat = c.id;
+        renderCategoryPicker();
+      });
+      frag.appendChild(div);
+    });
+    wrap.replaceChildren(frag);
+  }
+
+  function renderPeoplePicker() {
+    const trip = activeTrip();
+    const wrap = $('peopleGrid');
+    if (!trip) { wrap.textContent = ''; return; }
+    const frag = document.createDocumentFragment();
+    trip.people.forEach(p => {
+      const initial = (p.name && p.name.trim()[0] ? p.name.trim()[0] : '?').toUpperCase();
+      const isActive = selectedPeopleIds.includes(p.id);
+      const div = document.createElement('div');
+      div.className = 'person-pick' + (isActive ? ' active' : '') + (p.isMe ? ' me' : '');
+      div.innerHTML =
+        '<div class="av">' + escapeHtml(initial) + '</div>' +
+        escapeHtml(p.name);
+      div.addEventListener('click', () => {
+        const idx = selectedPeopleIds.indexOf(p.id);
+        if (idx >= 0) selectedPeopleIds.splice(idx, 1);
+        else selectedPeopleIds.push(p.id);
+        renderPeoplePicker();
+        renderSplitPreview();
+      });
+      frag.appendChild(div);
+    });
+    wrap.replaceChildren(frag);
+  }
+
+  function renderSplitPreview() {
+    const amt = parseFloat($('inputAmount').value);
+    const meP = me();
+    const n = selectedPeopleIds.length;
+    const preview = $('splitPreview');
+    if (!isFiniteNumber(amt) || n === 0 || amt <= 0) {
+      preview.innerHTML = '<span class="big">$0.00</span><span class="small">your share</span>';
+      return;
+    }
+    const perPerson = amt / n;
+    const youAreIn = selectedPeopleIds.includes(meP.id);
+
+    if (selectedPayback === 'treat') {
+      // Treat mode: no debt regardless of split
+      const others = selectedPeopleIds.filter(id => id !== meP.id);
+      const otherNames = others.map(id => {
+        const p = activeTrip().people.find(pp => pp.id === id);
+        return p ? p.name : '?';
+      });
+      if (others.length === 0) {
+        preview.innerHTML = '<span class="big">' + fmtMoney(amt) + '</span><span class="small">just you — solo expense</span>';
+      } else if (others.length === 1) {
+        preview.innerHTML = '<span class="big">🎁 ' + fmtMoney(amt) + '</span><span class="small">your treat for ' + escapeHtml(otherNames[0]) + ' — no payback</span>';
+      } else {
+        preview.innerHTML = '<span class="big">🎁 ' + fmtMoney(amt) + '</span><span class="small">your treat for ' + others.length + ' people — no payback</span>';
+      }
+      return;
+    }
+
+    // Owed back mode (original logic)
+    if (n === 1 && youAreIn) {
+      preview.innerHTML = '<span class="big">' + fmtMoney(amt) + '</span><span class="small">just you — no split</span>';
+    } else if (!youAreIn) {
+      preview.innerHTML = '<span class="big">$0.00</span><span class="small">you paid ' + fmtMoney(amt) + ' for ' + n + ' ' + (n === 1 ? 'person' : 'people') + ' — they\'ll owe you</span>';
+    } else {
+      preview.innerHTML = '<span class="big">' + fmtMoney(perPerson) + '</span><span class="small">your share · split ' + n + ' ways · others owe you ' + fmtMoney(amt - perPerson) + '</span>';
+    }
+  }
+
+  function openExpenseModal() {
+    editingExpenseId = null;
+    const meP = me();
+    if (!meP) return;
+    selectedCat = 'food';
+    selectedPeopleIds = [meP.id];
+    selectedPayback = 'owed';
+    $('inputAmount').value = '';
+    $('inputTitle').value = '';
+    try { $('inputDate').valueAsDate = new Date(); } catch (e) {}
+    renderCategoryPicker();
+    renderPeoplePicker();
+    renderPaybackToggle();
+    renderSplitPreview();
+    showModal('expenseModal');
+    setTimeout(() => { try { $('inputAmount').focus(); } catch (e) {} }, 120);
+  }
+
+  function renderPaybackToggle() {
+    const buttons = document.querySelectorAll('.payback-opt');
+    buttons.forEach(b => {
+      const pb = b.dataset.pb;
+      b.classList.toggle('active', pb === selectedPayback);
+    });
+  }
+
+  function saveExpense() {
+    const amt = parseFloat($('inputAmount').value);
+    if (!isFiniteNumber(amt) || amt <= 0) {
+      toast('Add an amount first', 'error');
+      try { $('inputAmount').focus(); } catch (e) {}
+      return;
+    }
+    if (selectedPeopleIds.length === 0) {
+      toast('Pick at least one person', 'error');
+      return;
+    }
+    const trip = activeTrip();
+    const meP = me();
+    if (!trip || !meP) return;
+    const title = $('inputTitle').value.trim();
+    let dateVal = Date.now();
+    try {
+      const v = $('inputDate').value;
+      if (v) dateVal = new Date(v + 'T12:00:00').getTime();
+      if (!isFiniteNumber(dateVal)) dateVal = Date.now();
+    } catch (e) {}
+
+    // Apply the modal-level payback choice to every non-me person in the split.
+    const paybackBy = {};
+    selectedPeopleIds.forEach(pid => {
+      if (pid !== meP.id) paybackBy[pid] = selectedPayback;
+    });
+
+    withUndo('Added ' + fmtMoney(amt), () => {
+      trip.expenses.push({
+        id: uid(),
+        amount: Math.round(amt * 100) / 100,
+        title,
+        category: selectedCat,
+        splitWith: selectedPeopleIds.slice(),
+        paidBy: meP.id,
+        date: dateVal,
+        settledBy: {},
+        paybackBy
+      });
+      saveData();
+      hideModal('expenseModal');
+      renderAll();
+    });
+  }
+
+  // ============================================================
+  // TRIP LIST
+  // ============================================================
+  function renderTripList() {
+    const trips = Object.values(data.trips).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    const wrap = $('tripList');
+    const frag = document.createDocumentFragment();
+    const multiple = trips.length > 1;
+    trips.forEach(t => {
+      const vibe = VIBE_BY_ID[t.vibe] || VIBE_BY_ID.default;
+      const isActive = t.id === data.activeTripId;
+      const total = t.expenses.reduce((s, e) => s + e.amount, 0);
+      const item = document.createElement('div');
+      item.className = 'trip-item' + (isActive ? ' active' : '');
+      item.innerHTML =
+        '<div class="flag">' + escapeHtml(vibe.em) + '</div>' +
+        '<div class="info">' +
+          '<div class="name">' + escapeHtml(t.name) + '</div>' +
+          '<div class="meta">' + t.expenses.length + ' items · ' + fmtMoney(total) + '</div>' +
+        '</div>' +
+        (multiple ? '<button class="del-trip" aria-label="Delete trip">×</button>' : '') +
+        '<div class="arrow">›</div>';
+      item.addEventListener('click', (ev) => {
+        if (ev.target.classList.contains('del-trip')) return;
+        data.activeTripId = t.id;
+        saveData();
+        activeFilter = 'all';
+        hideModal('tripListModal');
+        renderAll();
+        toast('Switched to ' + t.name);
+      });
+      if (multiple) {
+        const del = item.querySelector('.del-trip');
+        if (del) {
+          del.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            deleteTrip(t.id);
+          });
+        }
+      }
+      frag.appendChild(item);
+    });
+    wrap.replaceChildren(frag);
+  }
+
+  function deleteTrip(id) {
+    const trip = data.trips[id];
+    if (!trip) return;
+    const name = trip.name;
+    withUndo('Trip "' + name + '" deleted', () => {
+      delete data.trips[id];
+      if (data.activeTripId === id) {
+        const ids = Object.keys(data.trips);
+        data.activeTripId = ids[0] || null;
+      }
+      saveData();
+      renderTripList();
+      renderAll();
+    });
+  }
+
+  // ============================================================
+  // NEW TRIP
+  // ============================================================
+  function renderVibePicker() {
+    const wrap = $('vibeGrid');
+    const frag = document.createDocumentFragment();
+    VIBES.forEach(v => {
+      const div = document.createElement('div');
+      div.className = 'vibe-pick' + (newTripVibe === v.id ? ' active' : '');
+      div.dataset.v = v.id;
+      div.innerHTML = '<span class="em">' + escapeHtml(v.em) + '</span>' + escapeHtml(v.name);
+      div.addEventListener('click', () => {
+        newTripVibe = v.id;
+        renderVibePicker();
+      });
+      frag.appendChild(div);
+    });
+    wrap.replaceChildren(frag);
+  }
+
+  function autoSuggestVibe(name) {
+    const lower = name.toLowerCase();
+    const guesses = {
+      miami:'miami', florida:'miami',
+      italy:'italy', italian:'italy', rome:'italy', florence:'italy', venice:'italy', milan:'italy', sicily:'italy', tuscan:'italy', tuscany:'italy', amalfi:'italy',
+      japan:'japan', tokyo:'japan', kyoto:'japan', osaka:'japan',
+      greece:'greece', athens:'greece', santorini:'greece', mykonos:'greece',
+      mexico:'mexico', cancun:'mexico', tulum:'mexico', oaxaca:'mexico', cabo:'mexico',
+      france:'france', paris:'france', nice:'france', lyon:'france',
+      thailand:'thailand', bangkok:'thailand', phuket:'thailand', chiang:'thailand',
+      iceland:'iceland', reykjavik:'iceland',
+      nyc:'nyc', york:'nyc', manhattan:'nyc', brooklyn:'nyc',
+      hawaii:'hawaii', maui:'hawaii', oahu:'hawaii', kauai:'hawaii', honolulu:'hawaii'
+    };
+    for (const k in guesses) {
+      if (lower.indexOf(k) >= 0) return guesses[k];
+    }
+    return null;
+  }
+
+  function saveNewTrip() {
+    const name = $('newTripName').value.trim();
+    if (!name) {
+      toast('Trip needs a name', 'error');
+      try { $('newTripName').focus(); } catch (e) {}
+      return;
+    }
+    const id = uid();
+    const current = activeTrip();
+    const people = current
+      ? current.people.map(p => ({ id: uid(), name: p.name, isMe: p.isMe }))
+      : [{ id: uid(), name: 'Me', isMe: true }];
+    data.trips[id] = {
+      id, name, vibe: newTripVibe, budget: 0, people, expenses: [], createdAt: Date.now()
+    };
+    data.activeTripId = id;
+    saveData();
+    hideModal('newTripModal');
+    activeFilter = 'all';
+    renderAll();
+    toast('Trip "' + name + '" created!');
+  }
+
+  // ============================================================
+  // MANAGE PEOPLE
+  // ============================================================
+  function renderManagePeople() {
+    const trip = activeTrip();
+    const wrap = $('managePeopleGrid');
+    if (!trip) { wrap.textContent = ''; return; }
+    const frag = document.createDocumentFragment();
+    trip.people.forEach(p => {
+      const initial = (p.name && p.name.trim()[0] ? p.name.trim()[0] : '?').toUpperCase();
+      const div = document.createElement('div');
+      div.className = 'person-pick' + (p.isMe ? ' me active' : '');
+      div.innerHTML =
+        '<div class="av">' + escapeHtml(initial) + '</div>' +
+        escapeHtml(p.name);
+      if (!p.isMe) {
+        const x = document.createElement('span');
+        x.className = 'x';
+        x.textContent = '×';
+        x.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          removePerson(p.id);
+        });
+        div.appendChild(x);
+      }
+      frag.appendChild(div);
+    });
+    wrap.replaceChildren(frag);
+  }
+
+  function addPerson() {
+    const trip = activeTrip();
+    if (!trip) return;
+    const name = $('newPersonName').value.trim();
+    if (!name) { toast('Enter a name', 'error'); return; }
+    if (trip.people.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+      toast('Already added', 'error');
+      return;
+    }
+    trip.people.push({ id: uid(), name, isMe: false });
+    $('newPersonName').value = '';
+    saveData();
+    renderManagePeople();
+    toast('Added ' + name);
+  }
+
+  function removePerson(pid) {
+    const trip = activeTrip();
+    const person = trip.people.find(p => p.id === pid);
+    if (!person || person.isMe) return;
+    const name = person.name;
+    withUndo('Removed ' + name, () => {
+      trip.expenses.forEach(e => {
+        e.splitWith = (e.splitWith || []).filter(id => id !== pid);
+        if (e.settledBy && e.settledBy[pid]) delete e.settledBy[pid];
+        if (e.paybackBy && e.paybackBy[pid]) delete e.paybackBy[pid];
+      });
+      trip.expenses = trip.expenses.filter(e => e.splitWith.length > 0);
+      trip.people = trip.people.filter(p => p.id !== pid);
+      saveData();
+      renderManagePeople();
+      renderAll();
+    });
+  }
+
+  // ============================================================
+  // BUDGET / EXPORT / CLEAR / BACKUP
+  // ============================================================
+  function setBudget() {
+    const trip = activeTrip();
+    if (!trip) return;
+    const current = trip.budget || 0;
+    const input = prompt('Set a budget for this trip (in $):', current > 0 ? String(current) : '');
+    if (input === null) return;
+    const n = parseFloat(input);
+    if (!isFiniteNumber(n) || n < 0) { toast('Enter a valid number', 'error'); return; }
+    trip.budget = n;
+    saveData();
+    renderTotals();
+    toast(n > 0 ? 'Budget set to ' + fmtMoney(n) : 'Budget cleared');
+  }
+
+  function exportCsv() {
+    const trip = activeTrip();
+    if (!trip || trip.expenses.length === 0) { toast('No expenses to export', 'error'); return; }
+    const meP = me();
+    const rows = [['Date','Category','Description','Amount','Split With','Your Share','Type','Status']];
+    trip.expenses.forEach(e => {
+      const cat = CAT_BY_ID[e.category] || CAT_BY_ID.other;
+      const date = new Date(e.date).toLocaleDateString();
+      const paybackBy = e.paybackBy || {};
+      const peopleNames = (e.splitWith || []).map(pid => {
+        const p = trip.people.find(pp => pp.id === pid);
+        if (!p) return '?';
+        if (p.isMe) return p.name;
+        return p.name + (paybackBy[pid] === 'treat' ? ' (treat)' : '');
+      }).join('; ');
+      const splitCount = (e.splitWith || []).length;
+      const yourIn = e.splitWith.includes(meP.id);
+      const yourShare = (splitCount && yourIn) ? (e.amount / splitCount).toFixed(2) : '0.00';
+      const others = (e.splitWith || []).filter(id => id !== meP.id);
+      const treatCount = others.filter(pid => paybackBy[pid] === 'treat').length;
+      const fullySettled = isExpenseFullySettled(e, meP);
+      let type;
+      if (others.length === 0) type = 'Solo';
+      else if (treatCount === others.length) type = 'Treat';
+      else if (treatCount > 0) type = 'Mixed';
+      else type = 'Owed';
+      const status = type === 'Treat' ? 'N/A' :
+        (fullySettled ? 'Settled' : (splitCount > 1 ? 'Pending' : 'Solo'));
+      rows.push([date, cat.name, e.title || '', e.amount.toFixed(2), peopleNames, yourShare, type, status]);
+    });
+    const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+    try {
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = trip.name.replace(/\s+/g, '-').toLowerCase() + '-' + new Date().toISOString().slice(0,10) + '.csv';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast('Exported ' + trip.expenses.length + ' rows');
+    } catch (e) { toast('Export failed', 'error'); }
+  }
+
+  function backupAll() {
+    try {
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'trip-tracker-backup-' + new Date().toISOString().slice(0,10) + '.json';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast('Backed up all trips');
+    } catch (e) { toast('Backup failed', 'error'); }
+  }
+
+  function clearTrip() {
+    const trip = activeTrip();
+    if (!trip || trip.expenses.length === 0) { toast('Already empty', 'error'); return; }
+    const count = trip.expenses.length;
+    withUndo('Cleared ' + count + ' expense' + (count === 1 ? '' : 's'), () => {
+      trip.expenses = [];
+      saveData();
+      renderAll();
+    });
+  }
+
+  // ============================================================
+  // MODAL HELPERS
+  // ============================================================
+  function showModal(id) {
+    const el = $(id);
+    if (el) el.classList.add('show');
+  }
+  function hideModal(id) {
+    const el = $(id);
+    if (el) el.classList.remove('show');
+  }
+  function hideAllModals() {
+    ['expenseModal','tripListModal','newTripModal','peopleModal','personModal'].forEach(id => hideModal(id));
+  }
+
+  // ============================================================
+  // TOAST
+  // ============================================================
+  // TOAST + UNDO SYSTEM
+  // Snapshot-based: any destructive action saves a snapshot first,
+  // toast offers Undo for ~6 seconds. Tap = restore snapshot.
+  // ============================================================
+  let toastTimer = null;
+  let lastSnapshot = null;       // JSON snapshot of `data` before the action
+  let lastSnapshotMsg = null;    // What was undone, for second toast
+
+  // Deep clone with a guard against weird shapes
+  function snapshotData() {
+    try {
+      return JSON.stringify(data);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function restoreSnapshot() {
+    if (!lastSnapshot) return false;
+    try {
+      const parsed = JSON.parse(lastSnapshot);
+      data = sanitizeData(parsed);
+      saveDataImmediate();
+      lastSnapshot = null;
+      hideModal('personModal');
+      renderAll();
+      toast(lastSnapshotMsg || 'Undone');
+      lastSnapshotMsg = null;
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function toast(msg, kindOrOpts) {
+    const t = $('toast');
+    const msgEl = $('toastMsg');
+    const undoBtn = $('undoBtn');
+    if (!t || !msgEl || !undoBtn) return;
+
+    let kind = '';
+    let showUndo = false;
+    let onUndo = null;
+    let duration = 2200;
+
+    if (typeof kindOrOpts === 'string') {
+      kind = kindOrOpts;
+    } else if (kindOrOpts && typeof kindOrOpts === 'object') {
+      kind = kindOrOpts.kind || '';
+      if (typeof kindOrOpts.onUndo === 'function') {
+        showUndo = true;
+        onUndo = kindOrOpts.onUndo;
+        duration = kindOrOpts.duration || 6000;
+      }
+    }
+
+    msgEl.textContent = msg;
+
+    // Clear any existing handler
+    undoBtn.onclick = null;
+    if (showUndo) {
+      undoBtn.style.display = '';
+      undoBtn.onclick = () => {
+        try { onUndo(); } catch (e) {}
+        if (toastTimer) clearTimeout(toastTimer);
+        t.className = 'toast' + (kind === 'error' ? ' error' : '');
+      };
+    } else {
+      undoBtn.style.display = 'none';
+    }
+
+    t.className = 'toast show' + (kind === 'error' ? ' error' : '');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      t.className = 'toast' + (kind === 'error' ? ' error' : '');
+      undoBtn.onclick = null;
+    }, duration);
+  }
+
+  // Wrapper for actions that should be undoable.
+  // Takes a snapshot first, then does the action, then shows undo toast.
+  function withUndo(msg, action) {
+    const snap = snapshotData();
+    if (!snap) {
+      // Snapshot failed, do action without undo
+      action();
+      return;
+    }
+    lastSnapshot = snap;
+    lastSnapshotMsg = msg + ' undone';
+    action();
+    toast(msg, {
+      onUndo: () => {
+        restoreSnapshot();
+      },
+      duration: 6000
+    });
+  }
+
+  // ============================================================
+  // INSTALL BANNER
+  // ============================================================
+  function checkInstallBanner() {
+    try {
+      if (storeGet('install_dismissed')) return;
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+        || window.navigator.standalone === true;
+      if (isStandalone) return;
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      if (isIOS) $('installBanner').classList.add('show');
+    } catch (e) {}
+  }
+
+  // ============================================================
+  // WIRE UP (these elements never re-render so leak-free)
+  // ============================================================
+  $('addFab').addEventListener('click', openExpenseModal);
+  $('cancelExpenseBtn').addEventListener('click', () => hideModal('expenseModal'));
+  $('saveExpenseBtn').addEventListener('click', saveExpense);
+  $('inputAmount').addEventListener('input', renderSplitPreview);
+
+  // Payback toggle - delegate clicks
+  document.querySelectorAll('.payback-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedPayback = btn.dataset.pb;
+      renderPaybackToggle();
+      renderSplitPreview();
+    });
+  });
+
+  $('tripSwitcher').addEventListener('click', () => { renderTripList(); showModal('tripListModal'); });
+  $('newTripBtn').addEventListener('click', () => {
+    newTripVibe = 'default';
+    $('newTripName').value = '';
+    renderVibePicker();
+    showModal('newTripModal');
+    setTimeout(() => { try { $('newTripName').focus(); } catch (e) {} }, 120);
+  });
+  $('closeTripListBtn').addEventListener('click', () => hideModal('tripListModal'));
+  $('openNewTripBtn').addEventListener('click', () => {
+    hideModal('tripListModal');
+    newTripVibe = 'default';
+    $('newTripName').value = '';
+    renderVibePicker();
+    showModal('newTripModal');
+    setTimeout(() => { try { $('newTripName').focus(); } catch (e) {} }, 120);
+  });
+  $('cancelNewTripBtn').addEventListener('click', () => hideModal('newTripModal'));
+  $('saveNewTripBtn').addEventListener('click', saveNewTrip);
+
+  $('newTripName').addEventListener('input', () => {
+    const guess = autoSuggestVibe($('newTripName').value);
+    if (guess && newTripVibe === 'default') {
+      newTripVibe = guess;
+      renderVibePicker();
+    }
+  });
+
+  $('managePeopleBtn').addEventListener('click', () => { renderManagePeople(); showModal('peopleModal'); });
+  $('addPersonBtn').addEventListener('click', addPerson);
+  $('closePeopleBtn').addEventListener('click', () => { hideModal('peopleModal'); renderAll(); });
+  $('newPersonName').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); addPerson(); }
+  });
+
+  $('closePersonBtn').addEventListener('click', () => {
+    hideModal('personModal');
+    currentPersonId = null;
+  });
+  $('settleAllBtn').addEventListener('click', settleAllForPerson);
+
+  $('setBudgetBtn').addEventListener('click', setBudget);
+  $('exportBtn').addEventListener('click', exportCsv);
+  $('backupBtn').addEventListener('click', backupAll);
+  $('clearBtn').addEventListener('click', clearTrip);
+
+  $('dismissInstall').addEventListener('click', () => {
+    storeSet('install_dismissed', '1');
+    $('installBanner').classList.remove('show');
+  });
+
+  // Close modals on overlay click + ESC
+  ['expenseModal','tripListModal','newTripModal','peopleModal','personModal'].forEach(id => {
+    const el = $(id);
+    if (el) el.addEventListener('click', (e) => { if (e.target.id === id) hideModal(id); });
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideAllModals();
+  });
+
+  // ============================================================
+  // SERVICE WORKER REGISTRATION (silent fail when not hosted)
+  // ============================================================
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+
+  // ============================================================
+  // INIT
+  // ============================================================
+  loadData();
+  renderAll();
+  checkInstallBanner();
+
+})();
+</script>
+</body>
+</html>
